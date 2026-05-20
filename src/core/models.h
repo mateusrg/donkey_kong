@@ -102,3 +102,6 @@ typedef struct Jogo
     Mapa mapa; /**< Dados da fase atualmente carregada */
     TipoPlacar placar[MAX_PLACAR]; /**< Ranking carregado ou montado em memória */
 } Jogo;
+
+
+

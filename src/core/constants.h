@@ -64,7 +64,7 @@
 #define CAMINHO_ARQUIVO_PLACAR "dados/placar/placar.bin"
 
 /** Símbolo de tile vazio no arquivo de mapa */
-#define TILE_VAZIO '.'
+#define TILE_VAZIO ' '
 
 /** Símbolo de spawn do jogador no arquivo de mapa */
 #define TILE_JOGADOR 'P'
@@ -73,7 +73,7 @@
 #define TILE_INIMIGO 'E'
 
 /** Símbolo de plataforma sólida no arquivo de mapa */
-#define TILE_PLATAFORMA 'Z'
+#define TILE_CHAO 'Z'
 
 /** Símbolo de escada que permite subir no arquivo de mapa */
 #define TILE_ESCADA_SUBIDA 'S'
@@ -82,10 +82,14 @@
 #define TILE_ESCADA_DESCIDA 'D'
 
 /** Símbolo visual auxiliar de escada no arquivo de mapa */
-#define TILE_ESCADA_VISUAL 'H'
+#define TILE_ESCADA_PADRAO 'H'
 
 /** Símbolo da porta de saída no arquivo de mapa */
 #define TILE_PORTA 'F'
+/** Simbolo da princesa no arquivo de mapa */
+#define TILE_PRINCESA 'R'
+/** Simbolo do macaco no arquivo de mapa */
+#define TILE_DONKEY 'M'
 
 /**
  * @brief Identifica a tela atual da aplicação
@@ -110,3 +114,13 @@ typedef enum DirecaoHorizontal
     DIRECAO_PARADO = 0, /**< Entidade sem deslocamento horizontal */
     DIRECAO_DIREITA = 1 /**< Movimento horizontal para a direita */
 } DirecaoHorizontal;
+
+/**
+ * @brief Representa o estado atual de determinado personagem
+ */
+typedef enum AnimationType{
+    STOPPED = 0,
+    WALKING_RIGHT = 1,
+    WALKING_LEFT = 2,
+    JUMPING = 3,
+} AnimationType;

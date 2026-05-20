@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "mapa_io.h"
-#include "constants.h"
+#include "../core/constants.h"
 
 // Monta o nome do arquivo (Ex: mapa1.txt)
 bool mapa_montar_caminho_fase(int fase_atual, char caminho_saida[]) {
     // snprintf escreve o texto "mapas/mapaX.txt" dentro da variável caminho_saida
-    int resultado = snprintf(caminho_saida, TAMANHO_CAMINHO, "mapas/mapa+%d.txt", fase_atual);
+    int resultado = snprintf(caminho_saida, TAMANHO_CAMINHO, "dados/mapas/mapa%d.txt", fase_atual);
 
     // Se o resultado for negativo ou maior que o tamanho do buffer, deu erro
     return (resultado > 0 && resultado < TAMANHO_CAMINHO);
