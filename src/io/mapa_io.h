@@ -22,4 +22,4 @@ bool mapa_montar_caminho_fase(int fase_atual, char* caminho_saida);
  * @return true se o mapa foi lido e interpretado com sucesso
  * @return false se houve falha de leitura ou formato inválido
  */
-bool mapa_carregar(const char* caminho_arquivo, Mapa* mapa, Jogador* jogador, Inimigo* inimigos, int* quantidade_inimigos);
+bool mapa_carregar(const char* caminho_arquivo, Jogo* Jogo);

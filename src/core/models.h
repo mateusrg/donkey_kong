@@ -1,7 +1,5 @@
 #pragma once
-
 #include <stdbool.h>
-
 #include "constants.h"
 
 /**
@@ -12,6 +10,16 @@ typedef struct Vetor2D
     float x; /**< Componente horizontal do vetor */
     float y; /**< Componente vertical do vetor */
 } Vetor2D;
+
+typedef struct Animacao {
+    int first;
+    int last;
+    int cur; // current
+    float speed;
+    float duration_left;
+    AnimationType type;
+    int step; // how far you are stepping to the next frame
+} Animacao;
 
 /**
  * @brief Posição discreta do mapa baseada em linha e coluna
@@ -32,6 +40,7 @@ typedef struct ComandosJogador
     bool acao_principal; /**< Estado da ação principal no frame atual */
 } ComandosJogador;
 
+
 /**
  * @brief Estado completo do jogador durante a partida
  */
@@ -41,6 +50,7 @@ typedef struct Jogador
     PosicaoMapa spawn_inicial; /**< Tile usado para spawn e respawn */
     Vetor2D posicao_pixels; /**< Posição contínua do jogador em pixels */
     Vetor2D velocidade; /**< Velocidade atual do jogador em pixels por segundo */
+    Animacao animacao;
     Vetor2D aceleracao; /**< Aceleração atual do jogador em pixels por segundo ao quadrado */
     DirecaoHorizontal direcao_horizontal; /**< Direção horizontal atual do jogador */
     int vidas; /**< Quantidade de vidas restantes */
@@ -59,11 +69,39 @@ typedef struct Inimigo
     PosicaoMapa spawn_inicial; /**< Tile usado para o spawn inicial do inimigo */
     Vetor2D posicao_pixels; /**< Posição contínua do inimigo em pixels */
     Vetor2D velocidade; /**< Velocidade atual do inimigo em pixels por segundo */
+    Animacao animacao;
     Vetor2D aceleracao; /**< Aceleração atual do inimigo em pixels por segundo ao quadrado */
     DirecaoHorizontal direcao_horizontal; /**< Direção horizontal atual do inimigo */
     bool ativo; /**< Indica se o inimigo participa da simulação */
 } Inimigo;
 
+/**
+ * @brief Estado completo do donkey na fase
+ */
+typedef struct Donkey
+{
+    PosicaoMapa tile;
+    PosicaoMapa spawn_inicial;
+    Vetor2D posicao_pixels;
+    Vetor2D velocidade;
+    Animacao animacao;
+    Vetor2D aceleracao;
+    DirecaoHorizontal direcao_horizontal;
+    bool ativo;
+} Donkey;
+
+/**
+ * @brief Estado completo da princesa na fase
+ */
+
+ typedef struct Princesa
+ {
+    PosicaoMapa tile;
+    PosicaoMapa spawn_inicial;
+    Vetor2D posicao_pixels;
+    Animacao animacao;
+    bool ativo; // fim, pois a princesa não se moverá
+ } Princesa;
 /**
  * @brief Dados do layout da fase carregada do arquivo de mapa
  */
@@ -97,6 +135,8 @@ typedef struct Jogo
     float tempo_partida_segundos; /**< Tempo acumulado da partida em segundos */
     char nome_jogador[MAX_NOME_JOGADOR]; /**< Nome digitado para uso no ranking */
     Jogador jogador; /**< Estado atual do jogador */
+    Donkey donkey;/**<Estado atual do donkey */
+    Princesa princesa; /** <Estado atual da princesa */
     Inimigo inimigos[MAX_INIMIGOS]; /**< Vetor fixo com os inimigos ativos da fase */
     int quantidade_inimigos; /**< Quantidade válida de inimigos no vetor */
     Mapa mapa; /**< Dados da fase atualmente carregada */

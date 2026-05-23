@@ -91,6 +91,8 @@
 /** Simbolo do macaco no arquivo de mapa */
 #define TILE_DONKEY 'M'
 
+/** Quantidade de frames por cada linha das imagens */
+#define FRAMES_POR_LINHA 6
 /**
  * @brief Identifica a tela atual da aplicação
  */

@@ -10,7 +10,7 @@ Texture2D redimensiona_imagem_estatica(const char* nome_arquivo);
 /**
  * @brief Inicializa a renderizacao das texturas
  */
-void render_inicializar(void);
+void render_inicializar(Jogo* jogo);
 
 /**
  * @brief Desenha o fundo da tela
@@ -30,7 +30,21 @@ void desenha_mapa  (const Jogo* Jogo);
  * @param[in] jogo Estado principal consultado para renderização
  */
 
-void render_desenhar(const Jogo* jogo);
+ void render_desenhar(const Jogo* jogo);
+
+ /**
+  * @brief Desenha o layout do menu principal (Título e Botões)
+  */
+
+void desenha_menu_principal(void);
+
+/**
+ * @brief Desenha o layou do menu de pausa (continuar, voltar para o menu ou sair do jogo)
+ */
+
+ void desenha_menu_pausa(void);
+
+
 /**
  * @brief Encerra a renderizacao das texturas
  */
