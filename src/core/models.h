@@ -1,5 +1,6 @@
 #pragma once
 #include <stdbool.h>
+#include "raylib.h"
 #include "constants.h"
 
 /**
@@ -142,6 +143,21 @@ typedef struct Jogo
     Mapa mapa; /**< Dados da fase atualmente carregada */
     TipoPlacar placar[MAX_PLACAR]; /**< Ranking carregado ou montado em memória */
 } Jogo;
+
+/**
+ * @brief Define a estrutura das imagens utilizadas
+ */
+typedef struct {
+    Texture2D mario;
+    Texture2D fantasma;
+    Texture2D princesa;
+    Texture2D donkey;
+    Texture2D mapa;
+    Texture2D chao;
+    Texture2D escada;
+    Texture2D porta;
+    
+} TexturasJogo;
 
 
 

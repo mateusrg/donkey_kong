@@ -33,7 +33,7 @@ Rectangle animation_frame(const Animacao *animacaoPersonagem, int numero_frames_
     };
 }
 
-    void atualiza_entidades(Jogo *jogo) {
+void atualiza_entidades(Jogo *jogo) {
     // Pega o tempo que passou desde o último frame (Delta Time)
     // Nota: Se a sua função animation_update já chama GetFrameTime() lá dentro, 
     // você não precisa passar o dt aqui.

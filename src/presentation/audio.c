@@ -1,6 +1,7 @@
 #include <string.h>
 #include "audio.h"
 #include "raylib.h"
+#include "audio.h"
 
 // Declaro o tipo das variáveis, static pois só este arquivo enxerga elas
 static Music musica_fundo;
@@ -15,6 +16,7 @@ static Sound som_botao_sair;
 static Sound som_upgrade;
 static Sound som_ver_placar;
 static Sound som_pausa;
+static Sound som_troca_opcao;
 
 void inicializar_audio(void) {
     InitAudioDevice(); // Inicia o áudio
@@ -28,7 +30,7 @@ void inicializar_audio(void) {
     // Carregando os efeitos
     som_pulo = LoadSound("assets/audios/pulo.wav");
     som_morte = LoadSound("assets/audios/morte.wav");
-    som_inicio = LoadSound("assets/audios/iniciar.wav");
+    som_inicio = LoadSound("assets/audios/inicio.wav");
     som_porta = LoadSound("assets/audios/alcancou porta.wav");
     som_passos = LoadSound("assets/audios/passos.wav");
     som_abre_jogo = LoadSound("assets/audios/jogo abre.wav");
@@ -37,11 +39,12 @@ void inicializar_audio(void) {
     som_upgrade = LoadSound("assets/audios/upgrade.wav");
     som_ver_placar = LoadSound("assets/audios/ver placar.wav");
     som_pausa = LoadSound("assets/audios/pause.wav");
+    som_troca_opcao = LoadSound("assets/audios/troca_opcao.wav");
     
     // Configurando o som dos passos
     SetSoundVolume(som_pulo, 0.5f);
     SetSoundVolume(som_morte, 0.7f);
-    SetSoundVolume(som_inicio, 0.7f);
+    SetSoundVolume(som_inicio, 1.0f);
     SetSoundVolume(som_porta, 0.3f);
     SetSoundVolume(som_passos, 0.2f);
     SetSoundVolume(som_abre_jogo, 0.7f);
@@ -50,6 +53,7 @@ void inicializar_audio(void) {
     SetSoundVolume(som_upgrade, 0.4f);
     SetSoundVolume(som_ver_placar, 0.3f);
     SetSoundVolume(som_pausa, 0.5f);
+    SetSoundVolume(som_troca_opcao, 0.5f);
 }
 
 void atualizar_audio_musica(void) {
@@ -65,7 +69,7 @@ void tocar_audio_efeito(const char* nome_efeito) {
     } 
     else if (strcmp(nome_efeito, "inicio") == 0) {
         PlaySound(som_inicio);
-    } 
+    }
     else if (strcmp(nome_efeito, "porta") == 0) {
         PlaySound(som_porta);
     } 
@@ -92,11 +96,16 @@ void tocar_audio_efeito(const char* nome_efeito) {
             PlaySound(som_passos);
         }
     }
+     else if (strcmp(nome_efeito, "troca_opcao") == 0) {
+        if (!IsSoundPlaying(som_troca_opcao)) {
+            PlaySound(som_troca_opcao);
+        }
+    }
 }
 
 void encerrar_audio(void) {
     // Descarrega tudo da RAM
-    UnloadMusicStream(musica_fundo);
+   // UnloadMusicStream(musica_fundo);
     UnloadSound(som_pulo);
     UnloadSound(som_morte);
     UnloadSound(som_inicio);

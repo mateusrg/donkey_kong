@@ -30,16 +30,11 @@ void desenha_mapa  (const Jogo* Jogo);
  * @param[in] jogo Estado principal consultado para renderização
  */
 
- void render_desenhar(const Jogo* jogo);
+ void render_desenhar(Jogo* jogo);
 
- /**
-  * @brief Desenha o layout do menu principal (Título e Botões)
-  */
-
-void desenha_menu_principal(void);
 
 /**
- * @brief Desenha o layou do menu de pausa (continuar, voltar para o menu ou sair do jogo)
+ * @brief Desenha o layout do menu de pausa (continuar, voltar para o menu ou sair do jogo)
  */
 
  void desenha_menu_pausa(void);

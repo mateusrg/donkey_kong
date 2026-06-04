@@ -11,7 +11,8 @@
 int main(void) {
     // 1. Inicialização de dados
     char arquivoMapa[100];
-    Jogo meuJogo = { 0 }; // Zera toda a struct 
+    Jogo meuJogo = { 0 }; // Zera toda a struct
+    meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
 
     // 2. Monta o caminho e tenta carregar o mapa
     if (!mapa_montar_caminho_fase(3, arquivoMapa)) {
@@ -35,32 +36,36 @@ int main(void) {
     inicializar_audio();
 
     // Loop de teste
-    while (!WindowShouldClose()) {
+    while (!WindowShouldClose() && meuJogo.tela_atual != TELA_SAIR) {
 
         //Atualizações
 
-        atualizar_audio_musica();
+        if(meuJogo.tela_atual == TELA_JOGANDO){
+            atualizar_audio_musica();
+        }
 
-        atualiza_entidades(&meuJogo);
+            atualiza_entidades(&meuJogo);
         
         // --- DESENHO ---
-        BeginDrawing();
-            ClearBackground(BLACK); // Limpa a tela antes de desenhar
 
-            // Desenha o mapa e as texturas/animacoes dos personagens
-            
+            // Desenha os elementos gerais do jogo (Tela principal, animações dos personagens, tela de pausa, etc)
             render_desenhar(&meuJogo);
-            // Texto de apoio para saber se carregou algo
-            DrawText("Se o mapa nao aparecer, verifique os caracteres no .txt", 10, 10, 20, RAYWHITE);
-            DrawText(TextFormat("Inimigos carregados: %d", meuJogo.quantidade_inimigos), 10, 40, 20, YELLOW);
 
-        EndDrawing();
+          
+
     }
 
     // 5. Finalização
-    render_encerrar();
-    encerrar_audio();
-    CloseWindow();
+    // --- Na finalização da sua main.c ---
+    WaitTime(0.8f);
+    printf("Tentando encerrar render...\n");
+    render_encerrar(); // <--- Comente essa linha se o crash for aqui
+    printf("Render encerrado com sucesso!\n");
 
+    printf("Tentando encerrar audio...\n");
+    encerrar_audio(); // <--- Comente essa linha se o crash for aqui
+    printf("Audio encerrado com sucesso!\n");
+
+    CloseWindow();
     return 0;
 }

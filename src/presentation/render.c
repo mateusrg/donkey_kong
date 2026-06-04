@@ -2,23 +2,12 @@
 #include "../core/models.h"
 #include "render.h"
 #include "raylib.h"
+#include "menu.h"
 #include "animacao.h"
 #include "../core/constants.h" 
+#include "audio.h"
 #define LARGURA_IMAGENS_GRANDES 900
 #define ALTURA_IMAGENS_GRANDES 300
-
-
-typedef struct {
-    Texture2D mario;
-    Texture2D fantasma;
-    Texture2D princesa;
-    Texture2D donkey;
-    Texture2D mapa;
-    Texture2D chao;
-    Texture2D escada;
-    Texture2D porta;
-    
-} TexturasJogo;
 
 /*
 typedef enum AnimationType{
@@ -42,6 +31,8 @@ typedef struct Animation {
  */
 
 static TexturasJogo imagens;
+static Font fonteJogo;
+static Font fonteDemaisTextos;
 
 Texture2D redimensiona_imagem_estatica(const char* nome_arquivo){
     //altera o nome do caminho para o nome do arquivo informado
@@ -73,7 +64,11 @@ void render_inicializar(Jogo* jogo) {
     imagens.escada = redimensiona_imagem_estatica("escada");
     imagens.chao = redimensiona_imagem_estatica("chao");
     imagens.porta = redimensiona_imagem_estatica("porta");
-    
+
+    //Inicializa a fonte do jogo e a fonte dos demais textos
+
+    fonteJogo = LoadFont("assets/fontes/SuperMario256.ttf");
+    fonteDemaisTextos = LoadFont("assets/fontes/DemaisTextos.ttf");
     //Inicializando as structs das animações
     //Animacao mario:
     jogo->jogador.animacao = (Animacao){
@@ -147,7 +142,7 @@ void desenha_mapa  (const Jogo* jogo){
     }
 }
 
-// Desenha os objetivos que se movem (as entidades)
+// Desenha os objetos que se movem (as entidades)
 void desenha_entidades(const Jogo *jogo)
 {
 
@@ -186,7 +181,7 @@ void desenha_entidades(const Jogo *jogo)
     }                                                         
 
     for(int numInimigos = 0; numInimigos < jogo->quantidade_inimigos; numInimigos++){
-        if(jogo->inimigos[numInimigos].ativo == true)
+        if(jogo->inimigos[numInimigos].ativo == true){
             DrawTexturePro(
                 imagens.fantasma,
                 animation_frame(&jogo->inimigos[numInimigos].animacao, 6),
@@ -197,13 +192,30 @@ void desenha_entidades(const Jogo *jogo)
             );
         }
 }
+}
 
-void render_desenhar(const Jogo* jogo){
-    desenha_mapa(jogo);
-    desenha_entidades(jogo);
+
+void render_desenhar(Jogo* jogo){
+    BeginDrawing();
+    switch (jogo -> tela_atual)
+        {
+        case TELA_JOGANDO:
+            ClearBackground(BLACK);
+            desenha_mapa(jogo);
+            desenha_entidades(jogo);
+            break;
+        case TELA_MENU_PRINCIPAL:
+            ClearBackground(LIGHTGRAY);
+            desenha_menu_principal(jogo, fonteJogo, fonteDemaisTextos, imagens.mario, imagens.princesa, imagens.donkey);
+            break;
+        default:
+            break;
+        }
+    EndDrawing();
 }
             
 void render_encerrar(void) {
+
     UnloadTexture(imagens.mario);
     UnloadTexture(imagens.fantasma);
     UnloadTexture(imagens.princesa);
@@ -211,4 +223,7 @@ void render_encerrar(void) {
     UnloadTexture(imagens.chao);
     UnloadTexture(imagens.escada);
     UnloadTexture(imagens.porta);
+
+    UnloadFont(fonteJogo);
+    UnloadFont(fonteDemaisTextos);
 }

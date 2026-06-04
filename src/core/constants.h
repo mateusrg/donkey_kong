@@ -98,13 +98,14 @@
  */
 typedef enum TelaAtual
 {
-    TELA_MENU_PRINCIPAL, /**< Tela inicial com as opções principais */
-    TELA_JOGANDO, /**< Tela de jogo com a fase em andamento */
-    TELA_PAUSADO, /**< Tela de pausa aberta durante a partida */
-    TELA_RANKING, /**< Tela de exibição do ranking salvo */
-    TELA_DIGITANDO_NOME, /**< Tela de captura do nome para o ranking */
-    TELA_VITORIA, /**< Tela mostrada após concluir a partida */
-    TELA_GAME_OVER /**< Tela mostrada quando o jogador perde a partida */
+    TELA_MENU_PRINCIPAL = 0, /**< Tela inicial com as opções principais */
+    TELA_JOGANDO = 1, /**< Tela de jogo com a fase em andamento */
+    TELA_PAUSADO = 2, /**< Tela de pausa aberta durante a partida */
+    TELA_RANKING = 3, /**< Tela de exibição do ranking salvo */
+    TELA_DIGITANDO_NOME = 4, /**< Tela de captura do nome para o ranking */
+    TELA_VITORIA = 5, /**< Tela mostrada após concluir a partida */
+    TELA_GAME_OVER = 6, /**< Tela mostrada quando o jogador perde a partida */
+    TELA_SAIR = 7
 } TelaAtual;
 
 /**
@@ -121,8 +122,8 @@ typedef enum DirecaoHorizontal
  * @brief Representa o estado atual de determinado personagem
  */
 typedef enum AnimationType{
-    STOPPED = 0,
-    WALKING_RIGHT = 1,
-    WALKING_LEFT = 2,
-    JUMPING = 3,
+    STOPPED = 0, /**< Animação da entidade parada */
+    WALKING_RIGHT = 1, /** Animação da entidade andando para a direita */
+    WALKING_LEFT = 2, /** Animação da entidade andando para a esquerda */
+    JUMPING = 3, /** Animação da entidade pulando */
 } AnimationType;
