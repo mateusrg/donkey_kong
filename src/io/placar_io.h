@@ -41,4 +41,4 @@ bool placar_elegivel(const TipoPlacar* placar, int capacidade, int novo_tempo);
  * @param[in] nome Nome do jogador associado ao novo tempo
  * @param[in] novo_tempo Tempo que será inserido no ranking
  */
-void placar_inserir(TipoPlacar* placar, int capacidade, const char* nome, int novo_tempo);
+void placar_inserir(TipoPlacar* placar, int capacidade,char* nome, int novo_tempo);

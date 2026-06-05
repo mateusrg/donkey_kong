@@ -1,8 +1,13 @@
 #include "raylib.h"
 #include "menu.h"
+#include <string.h>
+#include "../io/placar_io.h"
 #define QUANTIA_BOTOES 4
 
 static int indiceTecladoInicial = 0;
+static bool ja_tocou = false;
+static int indInicial = 0;
+static char nomes[TAM_MAX_NOME + 1];
 
 
 void DrawTextWithOutline(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color textColor, Color outlineColor, float outlineThickness){
@@ -25,8 +30,12 @@ void DrawTextWithOutline(Font font, const char *text, Vector2 position, float fo
 }
 
 bool tocar_sons_botao(Rectangle retângulo, Vector2 posicaoTeclado, Vector2 posicaoMouse, int numBotao){
+    static int botaoQueJaTocou = -1;
+    
+    //Sons do clique/enter
     if(numBotao == 1){
         if (CheckCollisionPointRec(posicaoMouse, retângulo) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+            
             tocar_audio_efeito("inicio");
             return true;
         }
@@ -59,15 +68,44 @@ bool tocar_sons_botao(Rectangle retângulo, Vector2 posicaoTeclado, Vector2 posi
             tocar_audio_efeito("botao_sair");
             return true;
         }
+
+
     }
 
-    return false;
+    // Sons quando troca a opção
+
+    if(IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)){
+        tocar_audio_efeito("troca_opcao");
+    }
+    
+    if(IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)){
+        tocar_audio_efeito("troca_opcao");
+    }
+
+   
+    if(CheckCollisionPointRec(posicaoMouse, retângulo)){
+        int botaoTocadoAtual = numBotao; // Identifica qual botão o mouse está colidindo agora
+        
+        // A TRAVA: Só toca se o botão atual for diferente do que guardamos na memória
+    if(botaoTocadoAtual != botaoQueJaTocou){
+            tocar_audio_efeito("troca_opcao");
+            botaoQueJaTocou = botaoTocadoAtual; // Atualiza a memória para dizer: "Esse botão já tocou!"
+        }
+    } 
+    else {
+        // Se a função foi chamada para este botão e o mouse NÃO está colidindo com ele...
+        // E a memória achava que este era o último botão tocado, precisamos "limpar" a memória.
+        if (botaoQueJaTocou == numBotao) {
+            botaoQueJaTocou = -1; // Libera o botão para poder tocar de novo se o mouse voltar
+        }
+    }
+
+    return false;   
     
 }
 void determina_posicoes_inputs(Vector2 *posicoesTeclado, int *indice){
 
     if(IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)){
-        tocar_audio_efeito("troca_opcao");
         switch (*indice)
         {
         case 0:
@@ -86,7 +124,6 @@ void determina_posicoes_inputs(Vector2 *posicoesTeclado, int *indice){
     }
 
     else if(IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)){
-        tocar_audio_efeito("troca_opcao");
         switch (*indice)
         {
         case 0:
@@ -109,6 +146,7 @@ void determina_posicoes_inputs(Vector2 *posicoesTeclado, int *indice){
 
 void desenha_menu_principal(Jogo *jogo, Font fonteTitulo, Font fonteBotoes, Texture2D mario, Texture2D princesa, Texture2D donkey){
     // ----------------------- TOCA PRIMEIRO SOM DO JOGO ---------------------------
+
     static bool ja_tocou = false;
     if(!ja_tocou){
         tocar_audio_efeito("abre_jogo");
@@ -182,11 +220,11 @@ void desenha_menu_principal(Jogo *jogo, Font fonteTitulo, Font fonteBotoes, Text
         DrawTexturePro(
             princesa, animation_frame(&jogo->princesa.animacao, FRAMES_POR_LINHA), (Rectangle){posPrincesa.x, posPrincesa.y, (float)TILE_SIZE, (float)TILE_SIZE}, 
             (Vector2){0.0f, 0.0f}, 0.0f, WHITE);
-      
+      }
+ 
+    if(tocar_sons_botao (retanguloPlacar, posicoesTeclado[indiceTecladoInicial], posicaoMouse, 2)){
+        jogo->tela_atual = TELA_RANKING;
     }
-
-    
-    tocar_sons_botao (retanguloPlacar, posicoesTeclado[indiceTecladoInicial], posicaoMouse, 2);
 
 
     // Retangulo Sair:
@@ -248,5 +286,144 @@ void desenha_menu_principal(Jogo *jogo, Font fonteTitulo, Font fonteBotoes, Text
     DrawTextEx(fonteTitulo, "Mario vs. Donkey Kong", posicaoSombra, tamanho_fonte_titulo, 2.0f /*espaçamento*/ , BLACK);    
     //Escreve texto com traçado
     DrawTextWithOutline(fonteTitulo, "Mario vs. Donkey Kong", posicaoTexto, tamanho_fonte_titulo, 2.0f, RED, BLACK, 5.0f);
+
+}
+
+void desenha_tela_ranking(Jogo *jogo, Font fonteJogo, Font fonteTextos){
+    Vector2 posMouse = GetMousePosition();
+    // ------------------- ESCREVE TITULO COM E DECLARAÇÃO DAS POSIÇÕES DO MESMO ----------
+    float x_centro = JANELA_LARGURA / 2.0f;
+    float y_centro = JANELA_ALTURA / 2.0f;
+    float tamanhoFonteTitulo = 70.0f;
+    Vector2 tamanhoTitulo = MeasureTextEx(fonteJogo,"RANKING", tamanhoFonteTitulo, 2.0f);
+    float x_centro_texto = x_centro - (tamanhoTitulo.x / 2.0f);
+    float y_texto = JANELA_ALTURA -  (JANELA_ALTURA * 0.9f) - (tamanhoTitulo.y / 2);
+    Vector2 posTituloRanking = {
+        x_centro_texto, y_texto
+    };
+
+    DrawTextWithOutline(fonteJogo, "RANKING", posTituloRanking, tamanhoFonteTitulo, 2.0f, BLACK, WHITE, 2.0f);
+
+    // ------------------- DESENHA TABELA RANKING ------------------------------------------
+
+    // Declara retangulo maior
+    float retanguloRankingBase = JANELA_LARGURA * 0.8f ;
+    float retanguloRankingAltura = JANELA_ALTURA * 0.7f;
+    float retanguloRankingPosX = x_centro - (retanguloRankingBase / 2);
+    float retanguloRankingPosY = y_centro - (retanguloRankingAltura / 2);
+    Rectangle retanguloRanking = {
+        retanguloRankingPosX, retanguloRankingPosY, retanguloRankingBase, retanguloRankingAltura
+    };
+
+    // Declara retangulo menor
+    float retanguloRankingMenorBase = retanguloRankingBase * 0.8;
+    float retanguloRankingMenorAltura = retanguloRankingAltura * 0.8; 
+    float retanguloRankingMenorPosX = retanguloRankingPosX + ((retanguloRankingBase - retanguloRankingMenorBase) / 2);
+    float retanguloRankingMenorPosY = retanguloRankingPosY + ((retanguloRankingAltura - retanguloRankingMenorAltura) / 2);
+    Rectangle retanguloRankingMenor = {
+        retanguloRankingMenorPosX, retanguloRankingMenorPosY, retanguloRankingMenorBase, retanguloRankingMenorAltura
+    };
+     DrawRectangleRounded(retanguloRanking, 0.2, 3, RED);
+     DrawRectangleRounded(retanguloRankingMenor, 0.2, 3, RAYWHITE);
+     DrawRectangleRoundedLinesEx(retanguloRankingMenor, 0.2, 3, 5, BLACK);
+     DrawRectangleRoundedLinesEx(retanguloRanking, 0.2, 3, 5, BLACK);
+    
+    // ------------------ DESENHA BOTAO DE SAIR ----------------------------------------
+
+    float tamanhoFonteX = 30.0f;
+    Vector2 tamanhoX = MeasureTextEx(fonteTextos, "<", tamanhoFonteX, 2.0f);
+    
+    float retanguloBase = tamanhoX.x * 1.5f;
+    float retanguloAltura = tamanhoX.y * 1.5f;
+    
+
+    float retanguloX_pos = 20.0f;
+    float retanguloY_pos = 20.0f;
+    
+    Rectangle retanguloX = {
+        retanguloX_pos, 
+        retanguloY_pos, 
+        retanguloBase, 
+        retanguloAltura
+    };
+    
+    float posicaoXX = retanguloX.x + (retanguloX.width - tamanhoX.x) / 2.0f;
+    float posicaoXY = retanguloX.y + (retanguloX.height - tamanhoX.y) / 2.0f;
+    Vector2 posicaoX = {
+        posicaoXX, posicaoXY
+    };
+    
+    DrawRectangleRounded(retanguloX, 0.2f, 4, RED);
+    DrawRectangleRoundedLines(retanguloX, 0.2f, 4, BLACK);
+    DrawTextEx(fonteTextos, "<", posicaoX, tamanhoFonteX, 2.0f, BLACK);
+
+    if(CheckCollisionPointRec(posMouse, retanguloX)){
+        DrawRectangleRounded(retanguloX, 0.2f, 4, GRAY);
+        DrawRectangleRoundedLines(retanguloX, 0.2f, 4, BLACK);
+        DrawTextEx(fonteTextos, "<", posicaoX, tamanhoFonteX, 2.0f, BLACK);
+        if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
+            jogo -> tela_atual = TELA_MENU_PRINCIPAL;
+        }
+    }
+}
+
+void desenha_menu_nome(Jogo *jogo, Font fonteTextos){
+    float tamanhoFonte = 30.0f;
+    char letraAtual = GetCharPressed();
+    while(letraAtual > 0) {
+        if(indInicial < TAM_MAX_NOME){
+            nomes[indInicial] = letraAtual;
+            indInicial++;
+            nomes[indInicial] = '\0';
+        }
+        letraAtual = 0;
+    }
+
+    if(IsKeyPressed(KEY_BACKSPACE)){
+        indInicial--;
+        nomes[indInicial] = '\0';
+    }
+
+    // ----------------------- DESENHA O RETANGULO  -------------------------------
+    Vector2 tamanhoTexto = MeasureTextEx(fonteTextos, "EEEEEEEEEEEEEEEE", tamanhoFonte, 2.0f);
+
+    float retanguloNomeBase = tamanhoTexto.x + tamanhoTexto.x * 0.05f;
+    float retanguloNomeAltura = tamanhoTexto.y + tamanhoTexto.y;
+    float retanguloNomeX = JANELA_LARGURA / 2  - retanguloNomeBase / 2;
+    float retanguloNomeY = JANELA_ALTURA / 2 - retanguloNomeAltura / 2;
+
+    Rectangle retanguloNome = {
+        retanguloNomeX,  retanguloNomeY, retanguloNomeBase, retanguloNomeAltura
+    };
+
+    DrawRectangleRec(retanguloNome, RAYWHITE);
+    DrawRectangleLinesEx(retanguloNome, 2.0, GRAY);
+
+    // ----------------------- DESENHA O TEXTO DIGITADO ---------------------------
+    Vector2 tamanhoTextoNome = MeasureTextEx(fonteTextos, nomes, tamanhoFonte, 2.0f);
+    float posEscritaNomeX = retanguloNome.x + (retanguloNomeBase - tamanhoTextoNome.x) / 2.0f;
+    float posEscritaNomeY = retanguloNome.y + (retanguloNomeAltura - tamanhoTextoNome.y) / 2.0f;
+    Vector2 posEscritaNome = {
+        posEscritaNomeX, posEscritaNomeY
+    };
+    DrawTextEx(fonteTextos, nomes, posEscritaNome, tamanhoFonte, 4.0f, BLACK);
+
+    // ---------------------- DESENHA TEXTO EM CIMA DO RETANGULO ------------------
+    float tamanhoFonteTextoCima = tamanhoFonte;
+    Vector2 tamanhoTextoCima = MeasureTextEx(fonteTextos, "DIGITE O SEU NOME", tamanhoFonteTextoCima, 2.0f);
+    float posTextoX = JANELA_LARGURA / 2.0f - tamanhoTextoCima.x / 2.0f;
+    float posTextoY = (JANELA_ALTURA / 2.0f) - retanguloNomeAltura;
+    Vector2 posTexto = {
+        posTextoX, posTextoY
+    };
+
+    DrawTextWithOutline(fonteTextos,  "DIGITE O SEU NOME", posTexto, tamanhoFonteTextoCima, 2.0f, RED, GRAY, 1.0f);
+
+    if(IsKeyPressed(KEY_ENTER)){
+        
+        placar_inserir(jogo->placar, MAX_PLACAR, nomes, jogo->placar->time);
+
+        jogo->tela_atual = TELA_MENU_PRINCIPAL;
+    }
 
 }

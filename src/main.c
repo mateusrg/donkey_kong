@@ -4,6 +4,7 @@
 #include "core/constants.h" 
 #include "core/models.h"
 #include "io/mapa_io.h"
+#include "io/placar_io.h"
 #include "presentation/audio.h"
 #include "presentation/animacao.h"
 #include "presentation/render.h" // Certifique-se de que o caminho está correto
@@ -15,6 +16,7 @@ int main(void) {
     meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
 
     // 2. Monta o caminho e tenta carregar o mapa
+
     if (!mapa_montar_caminho_fase(3, arquivoMapa)) {
         printf("ERRO: Nome da fase invalido.\n");
         return 1;
@@ -23,6 +25,10 @@ int main(void) {
     // Passamos os endereços do que está DENTRO da meuJogo
     if (!mapa_carregar(arquivoMapa, &meuJogo)) {
         printf("ERRO CRITICO: Nao foi possivel carregar o arquivo: %s\n", arquivoMapa);
+        return 1;
+    }
+
+    if (!placar_carregar(CAMINHO_ARQUIVO_PLACAR, meuJogo.placar, MAX_PLACAR)){
         return 1;
     }
 

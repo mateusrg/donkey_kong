@@ -54,6 +54,7 @@ Texture2D redimensiona_imagem_estatica(const char* nome_arquivo){
     return tex;    
 }
 
+// Inicializa as texturas, fontes e as structs das animações
 void render_inicializar(Jogo* jogo) {
     //Inicializando as texturas/imagens
     imagens.mario = LoadTexture("assets/imagens/mario.png");
@@ -67,8 +68,8 @@ void render_inicializar(Jogo* jogo) {
 
     //Inicializa a fonte do jogo e a fonte dos demais textos
 
-    fonteJogo = LoadFont("assets/fontes/SuperMario256.ttf");
-    fonteDemaisTextos = LoadFont("assets/fontes/DemaisTextos.ttf");
+    fonteJogo = LoadFontEx("assets/fontes/SuperMario256.ttf", 96, NULL, 0);
+    fonteDemaisTextos = LoadFontEx("assets/fontes/DemaisTextos.ttf", 96, NULL, 0);
     //Inicializando as structs das animações
     //Animacao mario:
     jogo->jogador.animacao = (Animacao){
@@ -116,6 +117,7 @@ void render_inicializar(Jogo* jogo) {
     }
 }
 
+// Desenha o mapa (estruturas estáticas)
 void desenha_mapa  (const Jogo* jogo){
     for(int linha = 0; linha < MAPA_LINHAS; linha++){
         for(int coluna = 0; coluna < MAPA_COLUNAS; coluna++){
@@ -139,6 +141,40 @@ void desenha_mapa  (const Jogo* jogo){
                 break;
             }
         }
+    }
+}
+
+// Desenha o tempo ocorrido desde que o jogo foi para a tela da gameplay
+void desenha_tempo(Jogo* jogo){
+    if (jogo -> tela_atual == TELA_JOGANDO){
+        // Atribui o tempo de tela em segundos à struct do jogo tempo_partida_segundos
+        int tempoDecorrido = GetTime();
+        jogo -> tempo_partida_segundos = tempoDecorrido;
+        // --------------------- Desenha o texto "TEMPO" -----------------
+        float tamanhoFonteTextoTempo = 25.0f;
+
+        Vector2 tamanhoTextoTempo = MeasureTextEx(fonteDemaisTextos, "TEMPO", tamanhoFonteTextoTempo, 2.0f); 
+        float posTextoTempoX = ((float) JANELA_LARGURA * 0.9f) - (tamanhoTextoTempo.x / 2.0f);
+        float posTextoTempoY = ((float) JANELA_ALTURA * 0.05f) - (tamanhoTextoTempo.y / 2.0f);
+
+        Vector2 posicaoTextoTempo = {
+            posTextoTempoX, posTextoTempoY
+        };
+        // Desenha o texto com traçado "tempo"
+        DrawTextWithOutline(fonteDemaisTextos, "TEMPO", posicaoTextoTempo, tamanhoFonteTextoTempo, 2.0f, YELLOW, GRAY, 1.0f);
+        // ---------------------- Desenha texto dos SEGUNDOS ----------------------------------------------
+        float tamanhoFonteTextoSegundos = tamanhoFonteTextoTempo;
+
+        const char* textoSegundos = TextFormat("%d", tempoDecorrido);
+        Vector2 tamanhoTextoSegundos = MeasureTextEx(fonteDemaisTextos, textoSegundos, tamanhoFonteTextoSegundos, 2.0f);
+        float posTextoSegundosX = posTextoTempoX + (tamanhoTextoTempo.x / 2.0f) - (tamanhoTextoSegundos.x / 2.0f);
+        float posTextoSegundosY = posTextoTempoY + (tamanhoTextoTempo.y * 1.5f);
+
+        Vector2 posicaoTextoSegundos = {
+            posTextoSegundosX, posTextoSegundosY
+        };
+
+        DrawTextWithOutline(fonteDemaisTextos,textoSegundos, posicaoTextoSegundos, tamanhoFonteTextoSegundos, 2.0f, YELLOW, GRAY, 1.0f);
     }
 }
 
@@ -194,7 +230,7 @@ void desenha_entidades(const Jogo *jogo)
 }
 }
 
-
+// Função que dita qual tela será desenhada no momento
 void render_desenhar(Jogo* jogo){
     BeginDrawing();
     switch (jogo -> tela_atual)
@@ -202,18 +238,27 @@ void render_desenhar(Jogo* jogo){
         case TELA_JOGANDO:
             ClearBackground(BLACK);
             desenha_mapa(jogo);
+            desenha_tempo(jogo);
             desenha_entidades(jogo);
             break;
         case TELA_MENU_PRINCIPAL:
             ClearBackground(LIGHTGRAY);
             desenha_menu_principal(jogo, fonteJogo, fonteDemaisTextos, imagens.mario, imagens.princesa, imagens.donkey);
             break;
+        case TELA_RANKING:
+            ClearBackground(LIGHTGRAY);
+            desenha_tela_ranking(jogo, fonteJogo, fonteDemaisTextos);
+            break;
+        case TELA_DIGITANDO_NOME:
+            ClearBackground(BLACK);
+            desenha_menu_nome(jogo, fonteDemaisTextos);
+            break;
         default:
             break;
         }
     EndDrawing();
 }
-            
+// Descarrega as texturas e as fontes
 void render_encerrar(void) {
 
     UnloadTexture(imagens.mario);

@@ -41,4 +41,8 @@ void DrawTextWithOutline(Font font, const char *text, Vector2 position, float fo
  */
 void desenha_menu_principal(Jogo *jogo, Font fonteJogo, Font fonteBotoes, Texture2D mario, Texture2D princesa, Texture2D donkey);
 
+void desenha_menu_nome(Jogo *Jogo, Font fonteTextos);
+
+void desenha_tela_ranking(Jogo *jogo, Font fonteJogo, Font fonteTextos);
+
 

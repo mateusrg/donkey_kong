@@ -23,11 +23,18 @@ void desenha_entidades (const Jogo* Jogo);
  * @brief Desenha o fundo da tela
  * @param[in] Jogo Estado principal consultado para renderização
  */
-void desenha_mapa  (const Jogo* Jogo);
+void desenha_mapa  (const Jogo* jogo);
+
+/**
+ * @brief Desenha o tempo na tela se a tela atual for o jogo
+ * @param[in, out] Jogo Estado principal consultado para armazenar o tempo de tela.
+ */
+
+void desenha_tempo(Jogo* jogo);
 
 /**
  * @brief Desenha um frame completo da tela atual a partir do estado do jogo
- * @param[in] jogo Estado principal consultado para renderização
+ * @param[in, out] jogo Estado principal consultado para renderização
  */
 
  void render_desenhar(Jogo* jogo);

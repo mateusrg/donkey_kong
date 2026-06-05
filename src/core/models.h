@@ -133,7 +133,7 @@ typedef struct Jogo
     bool deve_encerrar; /**< Sinaliza que o loop principal deve ser encerrado */
     bool ranking_atualizado; /**< Indica se o ranking já foi atualizado no fim da partida */
     int fase_atual; /**< Número da fase atualmente carregada */
-    float tempo_partida_segundos; /**< Tempo acumulado da partida em segundos */
+    int tempo_partida_segundos; /**< Tempo acumulado da partida em segundos */
     char nome_jogador[MAX_NOME_JOGADOR]; /**< Nome digitado para uso no ranking */
     Jogador jogador; /**< Estado atual do jogador */
     Donkey donkey;/**<Estado atual do donkey */

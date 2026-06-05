@@ -17,6 +17,7 @@ static Sound som_upgrade;
 static Sound som_ver_placar;
 static Sound som_pausa;
 static Sound som_troca_opcao;
+static Sound som_nome;
 
 void inicializar_audio(void) {
     InitAudioDevice(); // Inicia o áudio
@@ -40,6 +41,7 @@ void inicializar_audio(void) {
     som_ver_placar = LoadSound("assets/audios/ver placar.wav");
     som_pausa = LoadSound("assets/audios/pause.wav");
     som_troca_opcao = LoadSound("assets/audios/troca_opcao.wav");
+    som_nome = LoadSound("assets/audios/nome_som.wav");
     
     // Configurando o som dos passos
     SetSoundVolume(som_pulo, 0.5f);
@@ -51,9 +53,10 @@ void inicializar_audio(void) {
     SetSoundVolume(som_fase_final, 0.6f);
     SetSoundVolume(som_botao_sair, 0.3f);
     SetSoundVolume(som_upgrade, 0.4f);
-    SetSoundVolume(som_ver_placar, 0.3f);
+    SetSoundVolume(som_ver_placar, 0.5f);
     SetSoundVolume(som_pausa, 0.5f);
     SetSoundVolume(som_troca_opcao, 0.5f);
+    SetSoundVolume(som_nome, 0.2f);
 }
 
 void atualizar_audio_musica(void) {
@@ -99,6 +102,11 @@ void tocar_audio_efeito(const char* nome_efeito) {
      else if (strcmp(nome_efeito, "troca_opcao") == 0) {
         if (!IsSoundPlaying(som_troca_opcao)) {
             PlaySound(som_troca_opcao);
+        }
+    }
+    else if (strcmp(nome_efeito, "nome") == 0) {
+        if (!IsSoundPlaying(som_nome)) {
+            PlaySound(som_nome);
         }
     }
 }

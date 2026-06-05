@@ -90,7 +90,8 @@
 #define TILE_PRINCESA 'R'
 /** Simbolo do macaco no arquivo de mapa */
 #define TILE_DONKEY 'M'
-
+/** Tamanho maximo do array de nomes */
+#define TAM_MAX_NOME 15
 /** Quantidade de frames por cada linha das imagens */
 #define FRAMES_POR_LINHA 6
 /**
