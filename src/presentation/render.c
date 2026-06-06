@@ -248,6 +248,8 @@ void render_desenhar(Jogo* jogo){
             break;
         case TELA_DIGITANDO_NOME:
             ClearBackground(BLACK);
+            atualiza_input_nome();
+            toca_audio_digitando();
             desenha_menu_nome(jogo, fonte_demais_textos);
             break;
         default:

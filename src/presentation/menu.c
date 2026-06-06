@@ -12,9 +12,23 @@ static int indice_teclado_inicial = 0;
 static bool ja_tocou_som_inicial = false;
 static bool primeira_tela_um = true;
 static int indice_nome = 0;
+static char tecla_pressionada = 0;
+;
 static char nomes[10 + 1];
 
 // ===== FUNÇÕES AUXILIARES =====
+void atualiza_input_nome(void){
+    tecla_pressionada = GetCharPressed();
+}
+
+void toca_audio_digitando(void){
+    if(IsKeyPressed(KEY_BACKSPACE)){
+        tocar_audio_efeito("nome");
+    }
+    if(tecla_pressionada != 0){
+        tocar_audio_efeito("nome");
+    }
+}
 
 void DrawTextWithOutline(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color textColor, Color outlineColor, float outlineThickness){
     // Desenha o contorno nas 4 direções cardinais (Esquerda, Direita, Cima, Baixo)
@@ -87,7 +101,7 @@ bool tocar_sons_botao(Rectangle retangulo, Vector2 posicao_teclado, Vector2 posi
 
     return false;
 }
-
+                                                                                                                                                                                                            
 void determina_posicoes_inputs(Vector2 *posicoes_teclado, int *indice){
     if(IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)){
         switch (*indice){
@@ -475,14 +489,13 @@ void desenha_menu_nome(Jogo *jogo, Font fonte_textos){
     float tamanho_fonte = TAMANHO_FONTE_DIGITACAO;
 
     // ===== CAPTURAR ENTRADAS DO TECLADO =====
-    char letra_atual = GetCharPressed();
-    while(letra_atual > 0) {
+    while(tecla_pressionada > 0) {
         if(indice_nome < TAM_MAX_NOME){
-            nomes[indice_nome] = letra_atual;
+            nomes[indice_nome] = tecla_pressionada;
             indice_nome++;
             nomes[indice_nome] = '\0';
         }
-        letra_atual = GetCharPressed();
+        tecla_pressionada = 0;
     }
 
     // Backspace com proteção contra índice negativo

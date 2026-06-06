@@ -23,6 +23,8 @@ void DrawTextWithOutline(Font font, const char *text, Vector2 position, float fo
  * @param indice Índice atual do cursor
  */
 void determina_posicoes_inputs(Vector2 *posicoes_teclado, int *indice);
+void atualiza_input_nome(void);
+void toca_audio_digitando(void);
 
 /**
  * @brief Verifica interação com botão (mouse ou teclado) e toca sons correspondentes

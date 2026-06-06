@@ -55,7 +55,7 @@ void inicializar_audio(void) {
     SetSoundVolume(som_upgrade, 0.4f);
     SetSoundVolume(som_ver_placar, 0.5f);
     SetSoundVolume(som_pausa, 0.5f);
-    SetSoundVolume(som_troca_opcao, 0.5f);
+    SetSoundVolume(som_troca_opcao, 0.05f);
     SetSoundVolume(som_nome, 0.2f);
 }
 
@@ -100,14 +100,12 @@ void tocar_audio_efeito(const char* nome_efeito) {
         }
     }
      else if (strcmp(nome_efeito, "troca_opcao") == 0) {
-        if (!IsSoundPlaying(som_troca_opcao)) {
-            PlaySound(som_troca_opcao);
-        }
+         PlaySound(som_troca_opcao);
+        
     }
     else if (strcmp(nome_efeito, "nome") == 0) {
-        if (!IsSoundPlaying(som_nome)) {
-            PlaySound(som_nome);
-        }
+        PlaySound(som_nome);
+    
     }
 }
 
