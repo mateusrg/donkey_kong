@@ -59,6 +59,7 @@ typedef struct Jogador
     bool esta_no_chao; /**< Indica se o jogador está apoiado em plataforma */
     bool esta_em_escada; /**< Indica se o jogador está interagindo com escada */
     bool esta_pulando; /**< Indica se o jogador está em estado de pulo */
+    bool alcancou_porta; /**< Indica se o jogador alcançou a porta de saída */
 } Jogador;
 
 /**
@@ -125,6 +126,15 @@ typedef struct TipoPlacar
 } TipoPlacar;
 
 /**
+ * @brief Controle de tempos das diferentes telas do jogo
+ */
+typedef struct TemposTelas
+{
+    float segundos_ate_jogar; /**< Tempo acumulado até o jogador começar */
+    float segundos_ate_fim_partida; /**< Tempo acumulado até o fim da partida */
+} TemposTelas;
+
+/**
  * @brief Estado principal da aplicação e da partida atual
  */
 typedef struct Jogo
@@ -132,6 +142,7 @@ typedef struct Jogo
     TelaAtual tela_atual; /**< Tela atualmente exibida pela aplicação */
     bool deve_encerrar; /**< Sinaliza que o loop principal deve ser encerrado */
     bool ranking_atualizado; /**< Indica se o ranking já foi atualizado no fim da partida */
+    bool enter_processado_neste_frame; /**< Indica se a tecla ENTER foi processada neste frame */
     int fase_atual; /**< Número da fase atualmente carregada */
     int tempo_partida_segundos; /**< Tempo acumulado da partida em segundos */
     char nome_jogador[MAX_NOME_JOGADOR]; /**< Nome digitado para uso no ranking */
@@ -142,6 +153,7 @@ typedef struct Jogo
     int quantidade_inimigos; /**< Quantidade válida de inimigos no vetor */
     Mapa mapa; /**< Dados da fase atualmente carregada */
     TipoPlacar placar[MAX_PLACAR]; /**< Ranking carregado ou montado em memória */
+    TemposTelas tempos_telas; /**< Controle de tempos das diferentes telas */
 } Jogo;
 
 /**
@@ -158,6 +170,3 @@ typedef struct {
     Texture2D porta;
     
 } TexturasJogo;
-
-
-

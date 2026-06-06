@@ -5,44 +5,79 @@
 #include "raylib.h"
 #include "animacao.h"
 /**
- * @brief Processa input e transições da tela de menu principal
- * @param[in] font Define a fonte que o texto traçado será escrito
- * @param[in] text A string do texto em questão
- * @param[in] position Posição que o texto ficará na tela
- * @param[in] fontSize Tamanho desejado do texto
- * @param[in] spacing Espaçamento entre as letras
- * @param[in] textColor Cor do texto
- * @param[in] outlineColor Cor do traçado do texto
- * @param[in] outlineThickness Grossura do traçado
+ * @brief Desenha texto com contorno (outline) para melhor legibilidade
+ * @param font Fonte a ser utilizada
+ * @param text Texto a ser desenhado
+ * @param position Posição do texto na tela
+ * @param fontSize Tamanho da fonte
+ * @param spacing Espaçamento entre caracteres
+ * @param textColor Cor principal do texto
+ * @param outlineColor Cor do contorno
+ * @param outlineThickness Espessura do contorno em pixels
  */
 void DrawTextWithOutline(Font font, const char *text, Vector2 position, float fontSize, float spacing, Color textColor, Color outlineColor, float outlineThickness);
 
 /**
- * @brief Cria um vetor de posições que clica a tecla UP ou DOWN do teclado podem gerar 
- * @param[in, out] posicoesTeclado Informa qual o indice do vetor de posições possíveis de um ponto qualquer com pase nos inputs do teclado
+ * @brief Atualiza a posição do cursor do teclado com base em inputs de setas
+ * @param posicoes_teclado Vetor de posições possíveis
+ * @param indice Índice atual do cursor
  */
-
- void determina_posicoes_inputs(Vector2 *posicoesTeclado, int *indice);
+void determina_posicoes_inputs(Vector2 *posicoes_teclado, int *indice);
 
 /**
- * @brief Define qual som será tocado no momento no menu
- * @param[in] Retangulo Retangulo que deseja-se descobrir se deve ou nao tocar o som
- * @param[in] posicaoTeclado Onde está localizado o vetor de posições do teclado na tela
- * @param[in] numBotao para saber qual deles que está sendo pressionado
- * @return True se tocar algum som (Ou seja, tecla foi selecionada)
- * @return False caso contrário
+ * @brief Verifica interação com botão (mouse ou teclado) e toca sons correspondentes
+ * @param retangulo Área do botão
+ * @param posicao_teclado Posição do cursor do teclado
+ * @param posicao_mouse Posição do mouse
+ * @param num_botao Número do botão (1=Jogar, 2=Placar, 3=Sair)
+ * @return true se o botão foi ativado, false caso contrário
  */
- bool tocar_sons_botao(Rectangle retângulo, Vector2 posicaoTeclado, Vector2 posicaoMouse, int numBotao);
+bool tocar_sons_botao(Rectangle retangulo, Vector2 posicao_teclado, Vector2 posicao_mouse, int num_botao);
 
 /**
- * @brief Processa input e transições do menu de pausa durante a partida
- * @param[in,out] jogo Estado principal usado para realizar o desenho do menu principal
- * @param[in, out] indice Indice atual dentro do vetor das posições possíveis
+ * @brief Processa input e transições da tela de menu principal
+ * @param jogo Ponteiro para a estrutura do jogo
+ * @param posicoes_teclado Vetor de posições possíveis do cursor
+ * @param posicao_mouse Posição atual do mouse
+ * @param retangulo_jogar Área do botão "Jogar"
+ * @param retangulo_placar Área do botão "Placar"
+ * @param retangulo_sair Área do botão "Sair"
  */
-void desenha_menu_principal(Jogo *jogo, Font fonteJogo, Font fonteBotoes, Texture2D mario, Texture2D princesa, Texture2D donkey);
+void atualiza_menu_principal(Jogo *jogo, Vector2 *posicoes_teclado, Vector2 posicao_mouse, Rectangle retangulo_jogar, Rectangle retangulo_placar, Rectangle retangulo_sair);
 
-void desenha_menu_nome(Jogo *Jogo, Font fonteTextos);
+/**
+ * @brief Renderiza o menu principal e processa inputs
+ * @param jogo Ponteiro para a estrutura do jogo
+ * @param fonte_jogo Fonte principal do jogo
+ * @param fonte_botoes Fonte dos botões
+ * @param mario Textura do Mario
+ * @param princesa Textura da Princesa
+ * @param donkey Textura do Donkey Kong
+ */
+void desenha_menu_principal(Jogo *jogo, Font fonte_jogo, Font fonte_botoes, Texture2D mario, Texture2D princesa, Texture2D donkey);
 
-void desenha_tela_ranking(Jogo *jogo, Font fonteJogo, Font fonteTextos);
+/**
+ * @brief Renderiza e processa a tela de digitação de nome do jogador
+ * @param jogo Ponteiro para a estrutura do jogo
+ * @param fonte_textos Fonte para os textos
+ */
+void desenha_menu_nome(Jogo *jogo, Font fonte_textos);
+
+Vector2 determina_posicao_ranking(TipoPlacar placar_atual, char opcao, int indice, Font fonte_nomes, Rectangle retangulo_calculos);
+/**
+ * @brief Renderiza os retângulos da tabela de ranking
+ * @param retangulo_exterior Retângulo que delimita a área da tabela
+ */
+void desenha_retangulos_menores_ranking(const Rectangle retangulo_exterior, Font fonte_nomes, Jogo* jogo);
+
+bool atualiza_tela_ranking(Rectangle retangulo_interagivel, Vector2  posicao_mouse);
+
+/**
+ * @brief Renderiza a tela de ranking com tabela de pontuações
+ * @param jogo Ponteiro para a estrutura do jogo
+ * @param fonte_jogo Fonte principal do jogo
+ * @param fonte_textos Fonte para os textos da tabela
+ */
+void desenha_tela_ranking(Jogo *jogo, Font fonte_jogo, Font fonte_textos);
 
 

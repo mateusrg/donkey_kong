@@ -18,6 +18,32 @@
 /** Altura total da janela em pixels incluindo a HUD */
 #define JANELA_ALTURA (MAPA_LINHAS * TILE_SIZE + HUD_ALTURA)
 
+// ===== TAMANHOS DE FONTE (RESPONSIVOS AO TILE_SIZE) =====
+
+/** Tamanho da fonte principal ao carregar (em pontos) */
+#define TAMANHO_FONTE_PRINCIPAL ((TILE_SIZE * 10 + 6))
+
+/** Tamanho da fonte para exibição de tempo durante gameplay */
+#define TAMANHO_FONTE_TEMPO ((float)TILE_SIZE)
+
+/** Tamanho da fonte do título no menu principal */
+#define TAMANHO_FONTE_TITULO_MENU ((TILE_SIZE * 4 + 4) / 3.0f)
+
+/** Tamanho da fonte dos botões do menu principal */
+#define TAMANHO_FONTE_BOTAO_MENU ((TILE_SIZE * 4) / 5.0f)
+
+/** Tamanho da fonte do título da tela de ranking */
+#define TAMANHO_FONTE_TITULO_RANKING ((TILE_SIZE * 7) / 3.0f)
+
+/** Tamanho da fonte dos nomes na tabela de ranking */
+#define TAMANHO_FONTE_NOMES_RANKING ((TILE_SIZE * 2) / 3.0f)
+
+/** Tamanho da fonte dos botões de UI (como botão X de voltar) */
+#define TAMANHO_FONTE_BOTAO_UI ((float)TILE_SIZE)
+
+/** Tamanho da fonte ao digitar o nome do jogador */
+#define TAMANHO_FONTE_DIGITACAO ((float)TILE_SIZE)
+
 /** Taxa de quadros alvo da aplicação */
 #define FPS_PADRAO 60
 
@@ -26,6 +52,8 @@
 
 /** Quantidade máxima de entradas persistidas no ranking */
 #define MAX_PLACAR 10
+/** Quantidade que aparece voz ver na tela do ranking */
+#define MAX_APARECE_RANKING 5
 
 /** Tamanho máximo do nome do jogador incluindo o terminador */
 #define MAX_NOME_JOGADOR 20
@@ -91,9 +119,11 @@
 /** Simbolo do macaco no arquivo de mapa */
 #define TILE_DONKEY 'M'
 /** Tamanho maximo do array de nomes */
-#define TAM_MAX_NOME 15
+#define TAM_MAX_NOME 10
 /** Quantidade de frames por cada linha das imagens */
 #define FRAMES_POR_LINHA 6
+/** Define o limite de segundos do jogo */
+#define LIMITE_SEGUNDOS 999
 /**
  * @brief Identifica a tela atual da aplicação
  */
