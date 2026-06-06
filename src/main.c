@@ -18,57 +18,42 @@
 
 #include "presentation/render.h" // Certifique-se de que o caminho está correto
 
-
-
-int main(void) {
+int main(void)
+{
 
     // 1. Inicialização de dados
 
     char arquivoMapa[100];
 
-    Jogo meuJogo = { 0 }; // Zera toda a struct
+    Jogo meuJogo = {0}; // Zera toda a struct
 
     meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
 
-
-
-    for(int i = 0; i < MAX_PLACAR; i++){
+    for (int i = 0; i < MAX_PLACAR; i++)
+    {
 
         meuJogo.placar[i].time = LIMITE_SEGUNDOS;
-
     }
-
-
 
     // 2. Monta o caminho e tenta carregar o mapa
 
-
-
-    if (!mapa_montar_caminho_fase(3, arquivoMapa)) {
+    if (!mapa_montar_caminho_fase(3, arquivoMapa))
+    {
 
         printf("ERRO: Nome da fase invalido.\n");
 
         return 1;
-
     }
-
-
-
-
-
-
 
     // Passamos os endereços do que está DENTRO da meuJogo
 
-    if (!mapa_carregar(arquivoMapa, &meuJogo)) {
+    if (!mapa_carregar(arquivoMapa, &meuJogo))
+    {
 
         printf("ERRO CRITICO: Nao foi possivel carregar o arquivo: %s\n", arquivoMapa);
 
         return 1;
-
     }
-
-
 
     /*
 
@@ -82,13 +67,8 @@ int main(void) {
 
     */
 
-
-
-
-
-
-
-    if (!placar_carregar(CAMINHO_ARQUIVO_PLACAR, meuJogo.placar, MAX_PLACAR)){
+    if (!placar_carregar(CAMINHO_ARQUIVO_PLACAR, meuJogo.placar, MAX_PLACAR))
+    {
 
         printf("Arquivo de placar não encontrado. Criando novo placar...\n");
 
@@ -97,18 +77,13 @@ int main(void) {
         placar_salvar(CAMINHO_ARQUIVO_PLACAR, meuJogo.placar, MAX_PLACAR);
 
         return 1;
-
     }
-
-
 
     // 3. Inicializa a Janela
 
     InitWindow(JANELA_LARGURA, JANELA_ALTURA, "Teste de Carregamento de Mapa");
 
     SetTargetFPS(60);
-
-
 
     // 4. Inicializa as texturas (chama aquela sua função que redimensiona)
 
@@ -118,75 +93,51 @@ int main(void) {
 
     inicializar_audio();
 
-
-
     // Loop de teste
 
-    while (!WindowShouldClose() && meuJogo.tela_atual != TELA_SAIR) {
+    while (!WindowShouldClose() && meuJogo.tela_atual != TELA_SAIR)
+    {
 
         meuJogo.enter_processado_neste_frame = false;
 
+        // Atualizações
 
-
-        //Atualizações
-
-
-
-        if(meuJogo.tela_atual == TELA_JOGANDO){
+        if (meuJogo.tela_atual == TELA_JOGANDO)
+        {
 
             atualizar_audio_musica();
-
         }
 
+        atualiza_entidades(&meuJogo);
 
+        if (IsKeyPressed(KEY_ENTER) && meuJogo.tela_atual == TELA_JOGANDO && !meuJogo.enter_processado_neste_frame)
+        {
 
-            atualiza_entidades(&meuJogo);
+            int tempoJogador = (int)GetTime() - meuJogo.tempos_telas.segundos_ate_jogar;
 
+            meuJogo.tempos_telas.segundos_ate_fim_partida = tempoJogador;
 
+            if (placar_elegivel(meuJogo.placar, MAX_PLACAR, tempoJogador))
+            {
 
-            if(IsKeyPressed(KEY_ENTER) && meuJogo.tela_atual == TELA_JOGANDO && !meuJogo.enter_processado_neste_frame){
+                meuJogo.enter_processado_neste_frame = true;
 
-                int tempoJogador = (int)GetTime() - meuJogo.tempos_telas.segundos_ate_jogar;
-
-                meuJogo.tempos_telas.segundos_ate_fim_partida = tempoJogador;
-
-                if(placar_elegivel(meuJogo.placar, MAX_PLACAR, tempoJogador)){
-
-
-
-                    meuJogo.enter_processado_neste_frame = true;
-
-                    meuJogo.tela_atual = TELA_DIGITANDO_NOME;
-
-                }
-
-                else{
-
-                    meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
-
-                }
-
+                meuJogo.tela_atual = TELA_DIGITANDO_NOME;
             }
 
-       
+            else
+            {
+
+                meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
+            }
+        }
 
         // --- DESENHO ---
 
+        // Desenha os elementos gerais do jogo (Tela principal, animações dos personagens, tela de pausa, etc)
 
-
-            // Desenha os elementos gerais do jogo (Tela principal, animações dos personagens, tela de pausa, etc)
-
-            render_desenhar(&meuJogo);
-
-
-
-         
-
-
-
+        render_desenhar(&meuJogo);
     }
-
-
 
     // 5. Finalização
 
@@ -200,18 +151,13 @@ int main(void) {
 
     printf("Render encerrado com sucesso!\n");
 
-
-
     printf("Tentando encerrar audio...\n");
 
     encerrar_audio(); // <--- Comente essa linha se o crash for aqui
 
     printf("Audio encerrado com sucesso!\n");
 
-
-
     CloseWindow();
 
     return 0;
-
 }

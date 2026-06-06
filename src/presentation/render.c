@@ -162,7 +162,7 @@ void desenha_tempo(Jogo* jogo){
         // ---------------------- Desenha texto dos SEGUNDOS ----------------------------------------------
         float tamanho_fonte_texto_segundos = tamanho_fonte_texto_tempo;
 
-        const char* texto_segundos = TextFormat("%d", (int)GetTime() - jogo->tempos_telas.segundos_ate_jogar);
+        const char* texto_segundos = TextFormat("%d", (int)GetTime() - (int)jogo->tempos_telas.segundos_ate_jogar);
         Vector2 tamanho_texto_segundos = MeasureTextEx(fonte_demais_textos, texto_segundos, tamanho_fonte_texto_segundos, 2.0f);
         float pos_texto_segundos_x = pos_texto_tempo_x + (tamanho_texto_tempo.x / 2.0f) - (tamanho_texto_segundos.x / 2.0f);
         float pos_texto_segundos_y = pos_texto_tempo_y + (tamanho_texto_tempo.y * 1.5f);

@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "menu.h"
 #include <string.h>
+#include <stdio.h>
 #include "../io/placar_io.h"
 #include "../core/constants.h"
 
@@ -130,6 +131,8 @@ void atualiza_menu_principal(Jogo *jogo, Vector2 *posicoes_teclado, Vector2 posi
     if(tocar_sons_botao(retangulo_jogar, posicoes_teclado[indice_teclado_inicial], posicao_mouse, 1)){
         jogo->tela_atual = TELA_JOGANDO;
         jogo->tempos_telas.segundos_ate_jogar = GetTime();
+        printf("Tempo salvo: %d\n", jogo->tempos_telas.segundos_ate_jogar);
+        
     }
 
     // Lógica do botão Ranking
