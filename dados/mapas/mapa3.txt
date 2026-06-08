@@ -1,6 +1,6 @@
                               
          D      R      D      
-         HZZZZZZZZZZZZZH      
+         HZZZZZZZZZZZZZH       
          H             H      
      D   S      M      S   D  
     ZHZZZZZZZZZZZZZZZZZZZZZHZ 
@@ -8,16 +8,16 @@
      S     D        D      S  
    ZZZZZZZZHZZZZZZZZHZZZZZZZZZ
            H        H         
-  D   E    S        SE       D
+  D   E B IS        S E      D
 ZZHZZZZZZZZZ        ZZZZZZZZZH
   H                          H
   S     D              D     S
   ZZZZZZHZZZZZZZZZZZZZZHZZZZZZ
         H              H      
-        S     D        S E    
+        S     D        S C    
  ZZZZZZZZZZZZZHZZZZZZZZZZZZZ  
               H               
-       D      S      D     
+       D      S      D        
       ZHZZZZZZZZZZZZZHZZZZS   
        H             H        
  D    ES             S      D 

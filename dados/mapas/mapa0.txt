@@ -15,7 +15,7 @@
                               
                               
                               
-F             D              E
+F      B    I D               E
 ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
                               
                               
@@ -26,5 +26,5 @@ ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
                               
                               
                               
-      P       S               
+      P       S      B        
 ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ

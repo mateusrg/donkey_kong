@@ -4,10 +4,9 @@
 
 bool placar_carregar(const char* caminho_arquivo, TipoPlacar* placar, int capacidade)
 {
-    FILE *arq1 = fopen(CAMINHO_ARQUIVO_PLACAR, "rb");
+    FILE *arq1 = fopen(caminho_arquivo, "rb");
     if(!arq1){
         printf("Erro ao abrir arquivo do placar");
-        fclose(arq1);
         return false;
     }
     else{
@@ -26,10 +25,9 @@ bool placar_carregar(const char* caminho_arquivo, TipoPlacar* placar, int capaci
 
 bool placar_salvar(const char* caminho_arquivo, const TipoPlacar* placar, int capacidade)
 {
-    FILE *arq1 = fopen(CAMINHO_ARQUIVO_PLACAR, "wb") ;
+    FILE *arq1 = fopen(caminho_arquivo, "wb") ;
     if(!arq1){
         printf("Erro ao abrir arquivo escrita do placar");
-        fclose(arq1);
         return false;
     }
     else{
@@ -43,8 +41,6 @@ bool placar_salvar(const char* caminho_arquivo, const TipoPlacar* placar, int ca
             return false;
         }
     }
-
-    fclose(arq1);
 }
 
 bool placar_elegivel(const TipoPlacar placar[], int capacidade, int novo_tempo)

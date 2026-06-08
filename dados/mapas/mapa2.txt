@@ -3,7 +3,7 @@
 ZZZZZZZZHZZ                   
         H                     
         H                     
-        S      D      E       
+   B    S   V  D      E       
        ZZZZZZZZHZ   ZZZZZ     
                H              
                H              
@@ -15,7 +15,7 @@ ZZZZZZZZHZZ
    ZZZZZZZZZZZZZZZZZHZZ       
                     H         
                     H         
- E    D             S         
+ C    D             S         
 ZZZ ZZHZZZZZZZZZZZZZZZ        
       H                       
       H                       
@@ -23,7 +23,7 @@ ZZZ ZZHZZZZZZZZZZZZZZZ
     ZZZZZZZZZZZZZZZZZZZZHZ ZZZ
                         H     
                         H     
-                        S P   
+                        S P  I
 ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
                               
                               

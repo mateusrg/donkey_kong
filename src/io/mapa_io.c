@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 #include "mapa_io.h"
 #include "../core/constants.h"
 #include "../core/models.h"
@@ -18,6 +19,17 @@ bool mapa_carregar(const char caminho_arquivo[], Jogo* jogo) {
     if (arquivo == NULL) return false;
 
     jogo->quantidade_inimigos = 0;
+    jogo->quantidade_powerups = 0;
+
+    // Reseta donkey e princesa: se o novo mapa não tiver os tiles M/R,
+    // eles devem ficar inativos, não herdar o estado da fase anterior.
+    jogo->donkey.ativo   = false;
+    jogo->princesa.ativo = false;
+
+    // Limpa todos os tiles antes de ler o novo arquivo.
+    // Sem isso, tiles de fases anteriores ficam em posições não sobrescritas
+    // quando a nova fase tem linhas mais curtas que a anterior.
+    memset(jogo->mapa.tiles, ' ', sizeof(jogo->mapa.tiles));
     int linha = 0, coluna = 0;
     char caractere;
 
@@ -55,9 +67,45 @@ bool mapa_carregar(const char caminho_arquivo[], Jogo* jogo) {
                         jogo -> inimigos[i].spawn_inicial.coluna = coluna;
                         jogo -> inimigos[i].posicao_pixels.x = (float)(coluna * TILE_SIZE);
                         jogo -> inimigos[i].posicao_pixels.y = (float)(linha * TILE_SIZE);
+                        jogo -> inimigos[i].tipo = INIMIGO_PATRULHEIRO;
                         jogo -> inimigos[i].ativo = true;
                         
                         (jogo -> quantidade_inimigos)++;
+                    }
+                    jogo -> mapa.tiles[linha][coluna] = ' ';
+                    break;
+
+                case TILE_INIMIGO_VELOZ:
+                    if (jogo -> quantidade_inimigos < MAX_INIMIGOS) {
+                        int iv = jogo -> quantidade_inimigos;
+                        jogo -> inimigos[iv].tile.linha = linha;
+                        jogo -> inimigos[iv].tile.coluna = coluna;
+                        jogo -> inimigos[iv].spawn_inicial.linha = linha;
+                        jogo -> inimigos[iv].spawn_inicial.coluna = coluna;
+                        jogo -> inimigos[iv].posicao_pixels.x = (float)(coluna * TILE_SIZE);
+                        jogo -> inimigos[iv].posicao_pixels.y = (float)(linha * TILE_SIZE);
+                        jogo -> inimigos[iv].tipo = INIMIGO_VELOZ;
+                        jogo -> inimigos[iv].ativo = true;
+                        (jogo -> quantidade_inimigos)++;
+                    }
+                    jogo -> mapa.tiles[linha][coluna] = ' ';
+                    break;
+
+                case TILE_POWERUP_TEMPO:
+                case TILE_POWERUP_VIDA:
+                case TILE_POWERUP_INVENCIVEL:
+                    if (jogo -> quantidade_powerups < MAX_POWERUPS) {
+                        int p = jogo -> quantidade_powerups;
+                        jogo -> powerups[p].posicao_pixels.x = (float)(coluna * TILE_SIZE);
+                        jogo -> powerups[p].posicao_pixels.y = (float)(linha * TILE_SIZE);
+                        if (caractere == TILE_POWERUP_VIDA)
+                            jogo -> powerups[p].tipo = POWERUP_VIDA;
+                        else if (caractere == TILE_POWERUP_INVENCIVEL)
+                            jogo -> powerups[p].tipo = POWERUP_INVENCIVEL;
+                        else
+                            jogo -> powerups[p].tipo = POWERUP_TEMPO;
+                        jogo -> powerups[p].ativo = true;
+                        (jogo -> quantidade_powerups)++;
                     }
                     jogo -> mapa.tiles[linha][coluna] = ' ';
                     break;

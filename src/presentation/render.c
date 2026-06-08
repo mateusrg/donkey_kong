@@ -9,6 +9,12 @@
 #define LARGURA_IMAGENS_GRANDES 900
 #define ALTURA_IMAGENS_GRANDES 300
 
+/**
+ * @brief Desenha todos os power-ups ativos da fase como retângulos amarelos
+ * @param[in] jogo Estado principal consultado para a lista de power-ups
+ */
+static void desenha_powerups(const Jogo* jogo);
+
 /*
 typedef enum AnimationType{
     STOPPED = 0,
@@ -147,8 +153,19 @@ void desenha_mapa  (const Jogo* jogo){
 // Desenha o tempo ocorrido desde que o jogo foi para a tela da gameplay
 void desenha_tempo(Jogo* jogo){
     if (jogo -> tela_atual == TELA_JOGANDO){
-        // --------------------- Desenha o texto "TEMPO" -----------------
+        int tempo_exibido;
+        int v;
+        float pos_vidas_x;
+        float pos_vidas_y;
+        float tamanho_coracao;
+        float gap;
+        Rectangle coracao;
+
         float tamanho_fonte_texto_tempo = TAMANHO_FONTE_TEMPO;
+
+        // Subtrai o bonus acumulado por power-ups; clamp em 0 para não exibir negativo
+        tempo_exibido = (int)GetTime() - (int)jogo->tempos_telas.segundos_ate_jogar - jogo->bonus_tempo_segundos;
+        if (tempo_exibido < 0) tempo_exibido = 0;
 
         Vector2 tamanho_texto_tempo = MeasureTextEx(fonte_demais_textos, "TEMPO", tamanho_fonte_texto_tempo, 2.0f); 
         float pos_texto_tempo_x = ((float) JANELA_LARGURA * 0.9f) - (tamanho_texto_tempo.x / 2.0f);
@@ -157,12 +174,10 @@ void desenha_tempo(Jogo* jogo){
         Vector2 posicao_texto_tempo = {
             pos_texto_tempo_x, pos_texto_tempo_y
         };
-        // Desenha o texto com traçado "tempo"
         DrawTextWithOutline(fonte_demais_textos, "TEMPO", posicao_texto_tempo, tamanho_fonte_texto_tempo, 2.0f, YELLOW, GRAY, 1.0f);
-        // ---------------------- Desenha texto dos SEGUNDOS ----------------------------------------------
-        float tamanho_fonte_texto_segundos = tamanho_fonte_texto_tempo;
 
-        const char* texto_segundos = TextFormat("%d", (int)GetTime() - (int)jogo->tempos_telas.segundos_ate_jogar);
+        float tamanho_fonte_texto_segundos = tamanho_fonte_texto_tempo;
+        const char* texto_segundos = TextFormat("%d", tempo_exibido);
         Vector2 tamanho_texto_segundos = MeasureTextEx(fonte_demais_textos, texto_segundos, tamanho_fonte_texto_segundos, 2.0f);
         float pos_texto_segundos_x = pos_texto_tempo_x + (tamanho_texto_tempo.x / 2.0f) - (tamanho_texto_segundos.x / 2.0f);
         float pos_texto_segundos_y = pos_texto_tempo_y + (tamanho_texto_tempo.y * 1.5f);
@@ -170,8 +185,42 @@ void desenha_tempo(Jogo* jogo){
         Vector2 posicao_texto_segundos = {
             pos_texto_segundos_x, pos_texto_segundos_y
         };
-
         DrawTextWithOutline(fonte_demais_textos, texto_segundos, posicao_texto_segundos, tamanho_fonte_texto_segundos, 2.0f, YELLOW, GRAY, 1.0f);
+
+        // Corações no lado esquerdo do HUD: apenas os corações cheios, um por vida.
+        // Mais fácil de contar que corações vazios. O João pode trocar por sprites depois.
+        // Durante invencibilidade, pisca alternando entre vermelho e dourado.
+        tamanho_coracao = tamanho_fonte_texto_tempo;
+        gap = tamanho_coracao * 0.3f;
+        pos_vidas_x = (float)JANELA_LARGURA * 0.05f;
+        pos_vidas_y = pos_texto_tempo_y;
+
+        for (v = 0; v < jogo->jogador.vidas; v++)
+        {
+            Color cor_coracao;
+
+            coracao = (Rectangle){
+                pos_vidas_x + (float)v * (tamanho_coracao + gap),
+                pos_vidas_y,
+                tamanho_coracao,
+                tamanho_coracao
+            };
+
+            // Pisca entre vermelho e dourado enquanto invencível
+            if (jogo->jogador.invencivel && ((int)(jogo->jogador.tempo_invencibilidade * 6) % 2 == 0))
+                cor_coracao = GOLD;
+            else
+                cor_coracao = RED;
+
+            DrawRectangleRounded(coracao, 0.3f, 4, cor_coracao);
+            DrawRectangleRoundedLines(coracao, 0.3f, 4, MAROON);
+        }
+
+        // Fase atual no centro do HUD
+        const char* texto_fase = TextFormat("FASE %d", jogo->fase_atual + 1);
+        Vector2 tamanho_texto_fase = MeasureTextEx(fonte_demais_textos, texto_fase, tamanho_fonte_texto_tempo, 2.0f);
+        float pos_fase_x = ((float)JANELA_LARGURA - tamanho_texto_fase.x) / 2.0f;
+        DrawTextWithOutline(fonte_demais_textos, texto_fase, (Vector2){pos_fase_x, pos_texto_tempo_y}, tamanho_fonte_texto_tempo, 2.0f, WHITE, GRAY, 1.0f);
     }
 }
 
@@ -215,16 +264,106 @@ void desenha_entidades(const Jogo *jogo)
 
     for(int num_inimigos = 0; num_inimigos < jogo->quantidade_inimigos; num_inimigos++){
         if(jogo->inimigos[num_inimigos].ativo == true){
+            // Inimigos velozes são desenhados em vermelho para se diferenciar dos patrulheiros
+            Color cor_inimigo = (jogo->inimigos[num_inimigos].tipo == INIMIGO_VELOZ) ? RED : WHITE;
             DrawTexturePro(
                 imagens.fantasma,
                 animation_frame(&jogo->inimigos[num_inimigos].animacao, 6),
                 (Rectangle){jogo->inimigos[num_inimigos].posicao_pixels.x, jogo->inimigos[num_inimigos].posicao_pixels.y, (float)TILE_SIZE, (float)TILE_SIZE},
                 (Vector2){0.0f, 0.0f},
                 0.0f,
-                WHITE
+                cor_inimigo
             );
         }
 }
+}
+
+// Tela de game over provisória — o João pode elaborar depois.
+void desenha_game_over(const Jogo* jogo, Font fonte)
+{
+    const char* texto = "GAME OVER";
+    const char* instrucao = "Pressione ENTER ou ESPACO para continuar";
+    Vector2 tamanho;
+    float pos_x;
+    float pos_y;
+
+    (void)jogo;
+
+    tamanho = MeasureTextEx(fonte, texto, TAMANHO_FONTE_DIGITACAO * 2.0f, 2.0f);
+    pos_x = ((float)JANELA_LARGURA - tamanho.x) / 2.0f;
+    pos_y = ((float)JANELA_ALTURA - tamanho.y) / 2.0f;
+    DrawTextWithOutline(fonte, texto, (Vector2){pos_x, pos_y}, TAMANHO_FONTE_DIGITACAO * 2.0f, 2.0f, RED, DARKGRAY, 3.0f);
+
+    Vector2 tam_instrucao = MeasureTextEx(fonte, instrucao, TAMANHO_FONTE_DIGITACAO * 0.6f, 2.0f);
+    DrawTextEx(fonte, instrucao,
+        (Vector2){((float)JANELA_LARGURA - tam_instrucao.x) / 2.0f, pos_y + tamanho.y * 1.8f},
+        TAMANHO_FONTE_DIGITACAO * 0.6f, 2.0f, GRAY);
+}
+
+// Tela de transição entre fases — provisória, o João vai elaborar depois.
+void desenha_proxima_fase(const Jogo* jogo, Font fonte)
+{
+    const char* texto;
+    Vector2 tamanho;
+    float pos_x;
+    float pos_y;
+
+    texto = TextFormat("PASSOU PARA A FASE %d!", jogo->fase_atual);
+    tamanho = MeasureTextEx(fonte, texto, TAMANHO_FONTE_DIGITACAO, 2.0f);
+    pos_x = ((float)JANELA_LARGURA - tamanho.x) / 2.0f;
+    pos_y = ((float)JANELA_ALTURA - tamanho.y) / 2.0f;
+
+    DrawTextEx(fonte, texto, (Vector2){pos_x, pos_y}, TAMANHO_FONTE_DIGITACAO, 2.0f, BLACK);
+
+    DrawTextEx(fonte, "Pressione ENTER ou ESPACO para continuar",
+        (Vector2){pos_x, pos_y + tamanho.y * 1.8f},
+        TAMANHO_FONTE_DIGITACAO * 0.6f, 2.0f, DARKGRAY);
+}
+
+// Power-ups são desenhados com cores distintas por tipo enquanto não há sprite:
+// amarelo = reduz tempo, verde = vida extra, ciano = invencibilidade
+static void desenha_powerups(const Jogo* jogo)
+{
+    int i;
+    Color cor;
+    Color borda;
+
+    for (i = 0; i < jogo->quantidade_powerups; i++)
+    {
+        if (!jogo->powerups[i].ativo)
+        {
+            continue;
+        }
+
+        if (jogo->powerups[i].tipo == POWERUP_VIDA)
+        {
+            cor   = GREEN;
+            borda = DARKGREEN;
+        }
+        else if (jogo->powerups[i].tipo == POWERUP_INVENCIVEL)
+        {
+            cor   = SKYBLUE;
+            borda = BLUE;
+        }
+        else
+        {
+            cor   = YELLOW;
+            borda = ORANGE;
+        }
+
+        DrawRectangle(
+            (int)jogo->powerups[i].posicao_pixels.x,
+            (int)jogo->powerups[i].posicao_pixels.y,
+            TILE_SIZE, TILE_SIZE,
+            cor
+        );
+        DrawRectangleLines(
+            (int)jogo->powerups[i].posicao_pixels.x,
+            (int)jogo->powerups[i].posicao_pixels.y,
+            TILE_SIZE, TILE_SIZE,
+            borda
+        );
+    }
 }
 
 // Função que dita qual tela será desenhada no momento
@@ -235,6 +374,7 @@ void render_desenhar(Jogo* jogo){
         case TELA_JOGANDO:
             ClearBackground(BLACK);
             desenha_mapa(jogo);
+            desenha_powerups(jogo);
             desenha_tempo(jogo);
             desenha_entidades(jogo);
             break;
@@ -245,6 +385,14 @@ void render_desenhar(Jogo* jogo){
         case TELA_RANKING:
             ClearBackground(LIGHTGRAY);
             desenha_tela_ranking(jogo, fonte_jogo, fonte_demais_textos);
+            break;
+        case TELA_VITORIA:
+            ClearBackground(WHITE);
+            desenha_proxima_fase(jogo, fonte_demais_textos);
+            break;
+        case TELA_GAME_OVER:
+            ClearBackground(BLACK);
+            desenha_game_over(jogo, fonte_demais_textos);
             break;
         case TELA_DIGITANDO_NOME:
             ClearBackground(BLACK);

@@ -18,16 +18,21 @@
 
 #include "presentation/render.h" // Certifique-se de que o caminho está correto
 
+#include "gameplay/mundo.h"
+
+#include "gameplay/jogador.h"
+
+#include "gameplay/inimigo.h"
+
 int main(void)
 {
 
     // 1. Inicialização de dados
 
-    char arquivoMapa[100];
-
-    Jogo meuJogo = {0}; // Zera toda a struct
+    Jogo meuJogo = {0};
 
     meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
+    meuJogo.fase_atual = 0;
 
     for (int i = 0; i < MAX_PLACAR; i++)
     {
@@ -35,22 +40,12 @@ int main(void)
         meuJogo.placar[i].time = LIMITE_SEGUNDOS;
     }
 
-    // 2. Monta o caminho e tenta carregar o mapa
+    // 2. Carrega a fase inicial usando mundo_carregar_fase
 
-    if (!mapa_montar_caminho_fase(3, arquivoMapa))
+    if (!mundo_carregar_fase(&meuJogo))
     {
 
-        printf("ERRO: Nome da fase invalido.\n");
-
-        return 1;
-    }
-
-    // Passamos os endereços do que está DENTRO da meuJogo
-
-    if (!mapa_carregar(arquivoMapa, &meuJogo))
-    {
-
-        printf("ERRO CRITICO: Nao foi possivel carregar o arquivo: %s\n", arquivoMapa);
+        printf("ERRO CRITICO: Nao foi possivel carregar o mapa da fase %d.\n", meuJogo.fase_atual);
 
         return 1;
     }
@@ -74,14 +69,20 @@ int main(void)
 
         // Se não conseguir carregar, salva um placar novo com os valores inicializados (999)
 
-        placar_salvar(CAMINHO_ARQUIVO_PLACAR, meuJogo.placar, MAX_PLACAR);
+        if (!placar_salvar(CAMINHO_ARQUIVO_PLACAR, meuJogo.placar, MAX_PLACAR))
 
-        return 1;
+        {
+
+            printf("Erro ao criar o arquivo de placar.\n");
+
+            return 1;
+
+        }
     }
 
     // 3. Inicializa a Janela
 
-    InitWindow(JANELA_LARGURA, JANELA_ALTURA, "Teste de Carregamento de Mapa");
+    InitWindow(JANELA_LARGURA, JANELA_ALTURA, "Mario vs Donkey Kong");
 
     SetTargetFPS(60);
 
@@ -104,8 +105,89 @@ int main(void)
 
         if (meuJogo.tela_atual == TELA_JOGANDO)
         {
+            ComandosJogador comandos = {0};
+            int tempo_jogador;
+            int i;
 
             atualizar_audio_musica();
+
+            if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) comandos.horizontal = 1;
+            else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) comandos.horizontal = -1;
+
+            if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) comandos.vertical = -1;
+            else if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) comandos.vertical = 1;
+
+            if (IsKeyPressed(KEY_SPACE)) comandos.acao_principal = true;
+
+            mundo_atualizar(&meuJogo, comandos, GetFrameTime());
+
+            if (mundo_jogador_alcancou_saida(&meuJogo))
+            {
+                // Avança para a próxima fase
+                meuJogo.fase_atual++;
+                meuJogo.jogador.alcancou_porta = false;
+
+                if (mundo_carregar_fase(&meuJogo))
+                {
+                    // Passa direto para o jogo sem tela intermediária.
+                    // Não reseta segundos_ate_jogar: o tempo acumula entre fases.
+                    meuJogo.tela_atual = TELA_JOGANDO;
+                }
+                else
+                {
+                    // Sem mais fases — fim de jogo completo
+                    tempo_jogador = (int)GetTime() - (int)meuJogo.tempos_telas.segundos_ate_jogar - meuJogo.bonus_tempo_segundos;
+                    if (tempo_jogador < 0) tempo_jogador = 0;
+                    meuJogo.tempos_telas.segundos_ate_fim_partida = (float)tempo_jogador;
+
+                    // Reseta para fase 0 e vidas antes de qualquer transição
+                    meuJogo.fase_atual = 0;
+                    mundo_carregar_fase(&meuJogo);
+                    meuJogo.jogador.vidas = VIDAS_INICIAIS;
+
+                    if (placar_elegivel(meuJogo.placar, MAX_PLACAR, tempo_jogador))
+                    {
+                        meuJogo.enter_processado_neste_frame = true;
+                        meuJogo.tela_atual = TELA_DIGITANDO_NOME;
+                    }
+                    else
+                    {
+                        meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
+                    }
+                }
+            }
+            else if (!meuJogo.jogador.ativo)
+            {
+                // Game over: calcula tempo, exibe tela de game over e depois placar
+                tempo_jogador = (int)GetTime() - (int)meuJogo.tempos_telas.segundos_ate_jogar - meuJogo.bonus_tempo_segundos;
+                if (tempo_jogador < 0) tempo_jogador = 0;
+                meuJogo.tempos_telas.segundos_ate_fim_partida = (float)tempo_jogador;
+
+                meuJogo.fase_atual = 0;
+                mundo_carregar_fase(&meuJogo);
+                meuJogo.jogador.vidas = VIDAS_INICIAIS;
+
+                meuJogo.enter_processado_neste_frame = true;
+                meuJogo.tela_atual = TELA_GAME_OVER;
+            }
+        }
+
+        if (meuJogo.tela_atual == TELA_GAME_OVER)
+        {
+            atualizar_audio_musica();
+            if (!meuJogo.enter_processado_neste_frame &&
+                (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE)))
+            {
+                if (placar_elegivel(meuJogo.placar, MAX_PLACAR, (int)meuJogo.tempos_telas.segundos_ate_fim_partida))
+                {
+                    meuJogo.enter_processado_neste_frame = true;
+                    meuJogo.tela_atual = TELA_DIGITANDO_NOME;
+                }
+                else
+                {
+                    meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
+                }
+            }
         }
 
         atualiza_entidades(&meuJogo);
@@ -147,13 +229,13 @@ int main(void)
 
     printf("Tentando encerrar render...\n");
 
-    render_encerrar(); // <--- Comente essa linha se o crash for aqui
+    render_encerrar();
 
     printf("Render encerrado com sucesso!\n");
 
     printf("Tentando encerrar audio...\n");
 
-    encerrar_audio(); // <--- Comente essa linha se o crash for aqui
+    encerrar_audio();
 
     printf("Audio encerrado com sucesso!\n");
 

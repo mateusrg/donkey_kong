@@ -48,6 +48,22 @@ void desenha_tempo(Jogo* jogo);
 
 
 /**
+ * @brief Desenha tela provisória de game over
+ * @param[in] jogo Estado principal consultado
+ * @param[in] fonte Fonte usada para desenhar o texto
+ */
+void desenha_game_over(const Jogo* jogo, Font fonte);
+
+/**
+ * @brief Desenha tela de transição entre fases
+ * @details Exibe tela branca com mensagem informando a próxima fase.
+ *          O João substituirá esta função por uma versão elaborada depois.
+ * @param[in] jogo Estado principal consultado para saber o número da próxima fase
+ * @param[in] fonte Fonte usada para desenhar o texto
+ */
+void desenha_proxima_fase(const Jogo* jogo, Font fonte);
+
+/**
  * @brief Encerra a renderizacao das texturas
  */
 void render_encerrar(void);

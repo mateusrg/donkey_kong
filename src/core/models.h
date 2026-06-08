@@ -60,6 +60,8 @@ typedef struct Jogador
     bool esta_em_escada; /**< Indica se o jogador está interagindo com escada */
     bool esta_pulando; /**< Indica se o jogador está em estado de pulo */
     bool alcancou_porta; /**< Indica se o jogador alcançou a porta de saída */
+    bool invencivel; /**< Indica se o jogador está invencível temporariamente */
+    float tempo_invencibilidade; /**< Segundos restantes de invencibilidade */
 } Jogador;
 
 /**
@@ -74,6 +76,7 @@ typedef struct Inimigo
     Animacao animacao;
     Vetor2D aceleracao; /**< Aceleração atual do inimigo em pixels por segundo ao quadrado */
     DirecaoHorizontal direcao_horizontal; /**< Direção horizontal atual do inimigo */
+    TipoInimigo tipo; /**< Comportamento de patrulha do inimigo */
     bool ativo; /**< Indica se o inimigo participa da simulação */
 } Inimigo;
 
@@ -104,6 +107,16 @@ typedef struct Donkey
     Animacao animacao;
     bool ativo; // fim, pois a princesa não se moverá
  } Princesa;
+/**
+ * @brief Power-up coletável espalhado na fase
+ */
+typedef struct PowerUp
+{
+    Vetor2D posicao_pixels; /**< Posição em pixels do power-up na tela */
+    TipoPowerUp tipo; /**< Efeito aplicado ao ser coletado */
+    bool ativo; /**< Indica se o power-up ainda pode ser coletado */
+} PowerUp;
+
 /**
  * @brief Dados do layout da fase carregada do arquivo de mapa
  */
@@ -154,6 +167,9 @@ typedef struct Jogo
     Mapa mapa; /**< Dados da fase atualmente carregada */
     TipoPlacar placar[MAX_PLACAR]; /**< Ranking carregado ou montado em memória */
     TemposTelas tempos_telas; /**< Controle de tempos das diferentes telas */
+    PowerUp powerups[MAX_POWERUPS]; /**< Power-ups ativos na fase atual */
+    int quantidade_powerups; /**< Quantidade válida de power-ups no vetor */
+    int bonus_tempo_segundos; /**< Segundos acumulados de redução de tempo por power-ups */
 } Jogo;
 
 /**

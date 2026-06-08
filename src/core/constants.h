@@ -44,6 +44,15 @@
 /** Tamanho da fonte ao digitar o nome do jogador */
 #define TAMANHO_FONTE_DIGITACAO ((float)TILE_SIZE)
 
+/** Quantidade maxima de power-ups simultaneos na fase */
+#define MAX_POWERUPS 16
+
+/** Duracao em segundos da invencibilidade concedida pelo power-up */
+#define DURACAO_INVENCIBILIDADE 8.0f
+
+/** Reducao em segundos aplicada ao tempo ao coletar um power-up */
+#define REDUCAO_TEMPO_POWERUP 5
+
 /** Taxa de quadros alvo da aplicação */
 #define FPS_PADRAO 60
 
@@ -62,7 +71,7 @@
 #define MAX_TEXTO_CAMINHO 260
 
 /** Quantidade inicial de vidas do jogador */
-#define VIDAS_INICIAIS 1
+#define VIDAS_INICIAIS 3
 
 /** Velocidade horizontal padrão do jogador em pixels por segundo */
 #define VELOCIDADE_JOGADOR_PADRAO 180.0f
@@ -80,7 +89,8 @@
 #define GRAVIDADE_PADRAO 1800.0f
 
 /** Impulso vertical inicial do pulo em pixels por segundo */
-#define FORCA_PULO_PADRAO 650.0f
+/** altura maxima = v0^2 / (2 * GRAVIDADE) => 480^2 / 3600 = 64px ~ 2 tiles */
+#define FORCA_PULO_PADRAO 480.0f
 
 /** Intervalo base entre passos de animação do inimigo em segundos */
 #define INIMIGO_INTERVALO_PASSO 0.30f
@@ -118,6 +128,14 @@
 #define TILE_PRINCESA 'R'
 /** Simbolo do macaco no arquivo de mapa */
 #define TILE_DONKEY 'M'
+/** Simbolo do powerup que reduz o tempo do jogador no arquivo de mapa */
+#define TILE_POWERUP_TEMPO 'B'
+/** Simbolo do powerup que concede vida extra no arquivo de mapa */
+#define TILE_POWERUP_VIDA 'I'
+/** Simbolo do powerup que concede invencibilidade temporaria no arquivo de mapa */
+#define TILE_POWERUP_INVENCIVEL 'V'
+/** Simbolo do inimigo veloz no arquivo de mapa */
+#define TILE_INIMIGO_VELOZ 'C'
 /** Tamanho maximo do array de nomes */
 #define TAM_MAX_NOME 10
 /** Quantidade de frames por cada linha das imagens */
@@ -158,3 +176,22 @@ typedef enum AnimationType{
     WALKING_LEFT = 2, /** Animação da entidade andando para a esquerda */
     JUMPING = 3, /** Animação da entidade pulando */
 } AnimationType;
+
+/**
+ * @brief Tipo de comportamento do inimigo
+ */
+typedef enum TipoInimigo
+{
+    INIMIGO_PATRULHEIRO = 0, /**< Patrulha horizontal em velocidade normal */
+    INIMIGO_VELOZ = 1,       /**< Patrulha horizontal em velocidade dobrada */
+} TipoInimigo;
+
+/**
+ * @brief Tipo de efeito do power-up coletado
+ */
+typedef enum TipoPowerUp
+{
+    POWERUP_TEMPO = 0,      /**< Reduz o tempo contado em REDUCAO_TEMPO_POWERUP segundos */
+    POWERUP_VIDA = 1,       /**< Concede uma vida extra ao jogador */
+    POWERUP_INVENCIVEL = 2, /**< Torna o jogador invencivel por DURACAO_INVENCIBILIDADE segundos */
+} TipoPowerUp;
