@@ -43,12 +43,12 @@ void inicializar_audio(void) {
     som_troca_opcao = LoadSound("assets/audios/troca_opcao.wav");
     som_nome = LoadSound("assets/audios/nome_som.wav");
     
-    // Configurando o som dos passos
+    // Configurando o volume dos sons
     SetSoundVolume(som_pulo, 0.5f);
     SetSoundVolume(som_morte, 0.7f);
     SetSoundVolume(som_inicio, 1.0f);
     SetSoundVolume(som_porta, 0.3f);
-    SetSoundVolume(som_passos, 0.2f);
+    SetSoundVolume(som_passos, 1.0f);
     SetSoundVolume(som_abre_jogo, 0.7f);
     SetSoundVolume(som_fase_final, 0.6f);
     SetSoundVolume(som_botao_sair, 0.3f);
@@ -57,6 +57,8 @@ void inicializar_audio(void) {
     SetSoundVolume(som_pausa, 0.5f);
     SetSoundVolume(som_troca_opcao, 0.05f);
     SetSoundVolume(som_nome, 0.2f);
+
+    SetSoundPitch(som_passos, 2.0f);
 }
 
 void atualizar_audio_musica(void) {

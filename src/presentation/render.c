@@ -68,6 +68,9 @@ void render_inicializar(Jogo* jogo) {
     imagens.donkey = LoadTexture("assets/imagens/donkey.png");
     imagens.fantasma = LoadTexture("assets/imagens/fantasma.png");
 
+    imagens.relogio = redimensiona_imagem_estatica("relogio");
+    imagens.coracao = redimensiona_imagem_estatica("coracao");
+    imagens.estrela = redimensiona_imagem_estatica("estrela");
     imagens.escada = redimensiona_imagem_estatica("escada");
     imagens.chao = redimensiona_imagem_estatica("chao");
     imagens.porta = redimensiona_imagem_estatica("porta");
@@ -123,6 +126,14 @@ void render_inicializar(Jogo* jogo) {
     }
 }
 
+/*
+TILE_POWERUP_TEMPO 'B'
+
+TILE_POWERUP_VIDA 'I'
+
+ILE_POWERUP_INVENCIVEL 'V'
+*/
+
 // Desenha o mapa (estruturas estáticas)
 void desenha_mapa  (const Jogo* jogo){
     for(int linha = 0; linha < MAPA_LINHAS; linha++){
@@ -151,15 +162,15 @@ void desenha_mapa  (const Jogo* jogo){
 }
 
 // Desenha o tempo ocorrido desde que o jogo foi para a tela da gameplay
-void desenha_tempo(Jogo* jogo){
+void desenha_elementos_HUD(Jogo* jogo){
     if (jogo -> tela_atual == TELA_JOGANDO){
         int tempo_exibido;
         int v;
         float pos_vidas_x;
         float pos_vidas_y;
-        float tamanho_coracao;
         float gap;
         Rectangle coracao;
+        Vector2 pos_coracao;
 
         float tamanho_fonte_texto_tempo = TAMANHO_FONTE_TEMPO;
 
@@ -190,30 +201,34 @@ void desenha_tempo(Jogo* jogo){
         // Corações no lado esquerdo do HUD: apenas os corações cheios, um por vida.
         // Mais fácil de contar que corações vazios. O João pode trocar por sprites depois.
         // Durante invencibilidade, pisca alternando entre vermelho e dourado.
-        tamanho_coracao = tamanho_fonte_texto_tempo;
-        gap = tamanho_coracao * 0.3f;
+
         pos_vidas_x = (float)JANELA_LARGURA * 0.05f;
         pos_vidas_y = pos_texto_tempo_y;
+        gap = (float)imagens.coracao.width * 2.0f + 5.0f;
 
         for (v = 0; v < jogo->jogador.vidas; v++)
         {
             Color cor_coracao;
 
-            coracao = (Rectangle){
-                pos_vidas_x + (float)v * (tamanho_coracao + gap),
-                pos_vidas_y,
-                tamanho_coracao,
-                tamanho_coracao
-            };
+
+            pos_coracao = (Vector2) {pos_vidas_x + (float)v * gap, pos_vidas_y};
 
             // Pisca entre vermelho e dourado enquanto invencível
-            if (jogo->jogador.invencivel && ((int)(jogo->jogador.tempo_invencibilidade * 6) % 2 == 0))
-                cor_coracao = GOLD;
-            else
-                cor_coracao = RED;
+            if (jogo->jogador.invencivel && ((int)(jogo->jogador.tempo_invencibilidade / 0.25f) % 2 == 0)){
+                 cor_coracao = (Color){180, 180, 255, 255}; // azulado;
+            }
+            else{
+                 cor_coracao = YELLOW;
+            }
 
-            DrawRectangleRounded(coracao, 0.3f, 4, cor_coracao);
-            DrawRectangleRoundedLines(coracao, 0.3f, 4, MAROON);
+            if(jogo->jogador.invencivel){
+                DrawTextureEx(imagens.coracao, pos_coracao, 0.0f, 2.0f, cor_coracao);
+            }
+            else{
+                DrawTextureEx(imagens.coracao, pos_coracao, 0.0f, 2.0f, WHITE);
+            }
+
+            
         }
 
         // Fase atual no centro do HUD
@@ -227,16 +242,39 @@ void desenha_tempo(Jogo* jogo){
 // Desenha os objetos que se movem (as entidades)
 void desenha_entidades(const Jogo *jogo)
 {
-
+    Color branco_transparente = WHITE;
+    Color azulado_transparente = {180, 180, 255, 255};
+    Color cores[2] = {branco_transparente, azulado_transparente};
+    int indice;
     if(jogo->jogador.ativo == true){
-        DrawTexturePro(
-            imagens.mario,
-            tamanho_frames(&jogo->jogador.animacao, FRAMES_POR_LINHA, jogo->jogador.direcao_horizontal),                                            // Define aonde será o corte na imagem original
-            (Rectangle){jogo->jogador.posicao_pixels.x, jogo->jogador.posicao_pixels.y, (float)TILE_SIZE, (float)TILE_SIZE}, // Define aonde ficará o mario no jogo
-            (Vector2){0.0f, 0.0f},                                                                                           // Define o eixo principal de rotação
-            0.0f,                                                                                                            // define a quantia de rotação
-            WHITE
-        );                                                                                                          // Define a cor
+        if(jogo->jogador.invencivel){
+            if((int)(jogo->jogador.tempo_invencibilidade / 0.25f) % 2 == 0){
+                indice = 1;
+            }
+            else{
+                indice = 0;
+            }
+            
+            DrawTexturePro(
+                imagens.mario,
+                tamanho_frames(&jogo->jogador.animacao, FRAMES_POR_LINHA, jogo->jogador.direcao_horizontal),                     // Define aonde será o corte na imagem original
+                (Rectangle){jogo->jogador.posicao_pixels.x, jogo->jogador.posicao_pixels.y, (float)TILE_SIZE, (float)TILE_SIZE}, // Define aonde ficará o mario no jogo
+                (Vector2){0.0f, 0.0f},                                                                                           // Define o eixo principal de rotação
+                0.0f,                                                                                                            // Define a quantia de rotação
+                cores[indice]                                                                                                    // Define a cor da imagem
+            );                                                                                                         
+        }
+        else{
+            DrawTexturePro(
+                imagens.mario,
+                tamanho_frames(&jogo->jogador.animacao, FRAMES_POR_LINHA, jogo->jogador.direcao_horizontal),                     // Define aonde será o corte na imagem original
+                (Rectangle){jogo->jogador.posicao_pixels.x, jogo->jogador.posicao_pixels.y, (float)TILE_SIZE, (float)TILE_SIZE}, // Define aonde ficará o mario no jogo
+                (Vector2){0.0f, 0.0f},                                                                                           // Define o eixo principal de rotação
+                0.0f,                                                                                                            // define a quantia de rotação
+                WHITE
+        ); 
+
+        }
     }
 
     if (jogo->princesa.ativo == true)
@@ -347,44 +385,26 @@ void desenha_proxima_fase(const Jogo* jogo, Font fonte)
 static void desenha_powerups(const Jogo* jogo)
 {
     int i;
-    Color cor;
-    Color borda;
+    
 
     for (i = 0; i < jogo->quantidade_powerups; i++)
     {
+        Vector2 posicao = {jogo->powerups[i].posicao_pixels.x, jogo->powerups[i].posicao_pixels.y};
         if (!jogo->powerups[i].ativo)
         {
             continue;
         }
 
-        if (jogo->powerups[i].tipo == POWERUP_VIDA)
-        {
-            cor   = GREEN;
-            borda = DARKGREEN;
+        if(jogo->powerups[i].tipo == POWERUP_VIDA){
+        
+            DrawTextureV(imagens.coracao, posicao, WHITE);
+    }
+        if(jogo->powerups[i].tipo == POWERUP_TEMPO){
+            DrawTextureV(imagens.relogio, posicao, WHITE);
+    }
+        if (jogo->powerups[i].tipo == POWERUP_INVENCIVEL){
+            DrawTextureV(imagens.estrela, posicao, WHITE);
         }
-        else if (jogo->powerups[i].tipo == POWERUP_INVENCIVEL)
-        {
-            cor   = SKYBLUE;
-            borda = BLUE;
-        }
-        else
-        {
-            cor   = YELLOW;
-            borda = ORANGE;
-        }
-
-        DrawRectangle(
-            (int)jogo->powerups[i].posicao_pixels.x,
-            (int)jogo->powerups[i].posicao_pixels.y,
-            TILE_SIZE, TILE_SIZE,
-            cor
-        );
-        DrawRectangleLines(
-            (int)jogo->powerups[i].posicao_pixels.x,
-            (int)jogo->powerups[i].posicao_pixels.y,
-            TILE_SIZE, TILE_SIZE,
-            borda
-        );
     }
 }
 
@@ -397,7 +417,7 @@ void render_desenhar(Jogo* jogo){
             ClearBackground(BLACK);
             desenha_mapa(jogo);
             desenha_powerups(jogo);
-            desenha_tempo(jogo);
+            desenha_elementos_HUD(jogo);
             desenha_entidades(jogo);
             break;
         case TELA_MENU_PRINCIPAL:

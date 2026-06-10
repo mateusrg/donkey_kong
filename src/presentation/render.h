@@ -30,7 +30,7 @@ void desenha_mapa  (const Jogo* jogo);
  * @param[in, out] Jogo Estado principal consultado para armazenar o tempo de tela.
  */
 
-void desenha_tempo(Jogo* jogo);
+void desenha_elementos_HUD(Jogo* jogo);
 
 /**
  * @brief Desenha um frame completo da tela atual a partir do estado do jogo

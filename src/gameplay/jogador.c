@@ -544,5 +544,6 @@ void jogador_atualizar(Jogador* jogador, const Mapa* mapa, ComandosJogador coman
 }
 
 bool esta_parado(const ComandosJogador comandos){
-    return(!IsKeyDown(KEY_LEFT) && !IsKeyDown(KEY_RIGHT) && !comandos.vertical);
+    return(!IsKeyDown(KEY_LEFT) && !IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_A) && !IsKeyDown(KEY_D) && !IsKeyDown(KEY_W) && !IsKeyDown(KEY_S) 
+    && !IsKeyDown(KEY_DOWN) && !IsKeyDown(KEY_UP));
 }

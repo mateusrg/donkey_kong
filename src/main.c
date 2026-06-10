@@ -33,7 +33,7 @@ int main(void)
     
 
     meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
-    meuJogo.fase_atual = 3;
+    meuJogo.fase_atual = 2;
 
     for (int i = 0; i < MAX_PLACAR; i++)
     {
@@ -114,12 +114,15 @@ int main(void)
 
             if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) comandos.horizontal = 1;
             else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) comandos.horizontal = -1;
-            
-
+            if(jogador_esta_sobre_plataforma(&meuJogo.jogador, &meuJogo.mapa) && (IsKeyDown(KEY_RIGHT)
+            || IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_D) || IsKeyDown(KEY_A))){
+                tocar_audio_efeito("passos");
+            }
+        
             if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) comandos.vertical = -1;
             else if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) comandos.vertical = 1;
 
-            if (IsKeyPressed(KEY_SPACE)) comandos.acao_pulo = true;
+            if (IsKeyPressed(KEY_SPACE) && jogador_esta_sobre_plataforma(&meuJogo.jogador, &meuJogo.mapa)){ comandos.acao_pulo = true; tocar_audio_efeito("pulo");}
 
 
 

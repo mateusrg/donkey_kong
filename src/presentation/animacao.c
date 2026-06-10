@@ -48,18 +48,49 @@ void atualiza_anim_entidades(Jogo *jogo) {
     // Pega o tempo que passou desde o último frame (Delta Time)
     // Nota: Se a sua função atualiza_animacao já chama GetFrameTime() lá dentro, 
     // você não precisa passar o dt aqui.
-    if(esta_parado(jogo->jogador.comandos)){
+    int ultimo_frame;
+    
+    if(jogo->tela_atual == TELA_MENU_PRINCIPAL){
         jogo->jogador.animacao.first = 0;
-        jogo->jogador.animacao.last = 0;
+        jogo->jogador.animacao.last =  0;
     }
+    
     else{
-        jogo->jogador.animacao.first = 1;
-        jogo->jogador.animacao.last = 2;
-    }
+    
+        if(jogo->jogador.esta_em_escada) {
+            if(esta_parado(jogo->jogador.comandos)){
+                jogo->jogador.animacao.first = 5;
+                jogo->jogador.animacao.last = 5;
+            }
+            else{
+                if(ultimo_frame != 5 || ultimo_frame != 6){
+                    jogo->jogador.animacao.cur = 5;
+                    ultimo_frame = 5;
+                }
+                {
+                    jogo->jogador.animacao.first = 5;
+                    jogo->jogador.animacao.last = 6;
+                }
+            }
+        }
+        else {
 
-    if(!jogador_esta_sobre_plataforma(&jogo->jogador, &jogo->mapa)){
-        jogo-> jogador.animacao.first = 3;
-        jogo-> jogador.animacao.last = 3;
+            if(esta_parado(jogo->jogador.comandos)){
+                jogo->jogador.animacao.first = 0;
+                jogo->jogador.animacao.last = 0;
+            }
+    
+            else if(!jogador_esta_sobre_plataforma(&jogo->jogador, &jogo->mapa)){
+                jogo-> jogador.animacao.first = 3;
+                jogo-> jogador.animacao.last = 3;
+            }
+    
+            else {
+                jogo->jogador.animacao.first = 1;
+                jogo->jogador.animacao.last = 2;
+                ultimo_frame = 1;
+            }
+        }
     }
    
     

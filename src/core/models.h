@@ -186,5 +186,8 @@ typedef struct {
     Texture2D chao;
     Texture2D escada;
     Texture2D porta;
+    Texture2D estrela;
+    Texture2D coracao;
+    Texture2D relogio;
     
 } TexturasJogo;
