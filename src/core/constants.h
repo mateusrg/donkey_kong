@@ -162,8 +162,7 @@ typedef enum TelaAtual
  */
 typedef enum DirecaoHorizontal
 {
-    DIRECAO_ESQUERDA = -1, /**< Movimento horizontal para a esquerda */
-    DIRECAO_PARADO = 0, /**< Entidade sem deslocamento horizontal */
+    DIRECAO_ESQUERDA = -1, /**< Movimento horizontal para a esquerda */ 
     DIRECAO_DIREITA = 1 /**< Movimento horizontal para a direita */
 } DirecaoHorizontal;
 

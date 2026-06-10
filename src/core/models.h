@@ -52,6 +52,7 @@ typedef struct Jogador
     Vetor2D posicao_pixels; /**< Posição contínua do jogador em pixels */
     Vetor2D velocidade; /**< Velocidade atual do jogador em pixels por segundo */
     Animacao animacao;
+    ComandosJogador comandos;
     Vetor2D aceleracao; /**< Aceleração atual do jogador em pixels por segundo ao quadrado */
     DirecaoHorizontal direcao_horizontal; /**< Direção horizontal atual do jogador */
     int vidas; /**< Quantidade de vidas restantes */

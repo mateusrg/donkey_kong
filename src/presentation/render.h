@@ -48,11 +48,19 @@ void desenha_tempo(Jogo* jogo);
 
 
 /**
- * @brief Desenha tela provisória de game over
+ * @brief Desenha tela de game over
  * @param[in] jogo Estado principal consultado
  * @param[in] fonte Fonte usada para desenhar o texto
  */
 void desenha_game_over(const Jogo* jogo, Font fonte);
+
+/**
+ * @brief Desenha tela de vitoria
+ * @param[in] jogo Estado principal consultado
+ * @param[in] fonte Fonte usada para desenhar o texto
+ */
+
+void desenha_vitoria(const Jogo* jogo, Font fonte);
 
 /**
  * @brief Desenha tela de transição entre fases

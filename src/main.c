@@ -30,6 +30,7 @@ int main(void)
     // 1. Inicialização de dados
 
     Jogo meuJogo = {0};
+    
 
     meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
     meuJogo.fase_atual = 3;
@@ -98,14 +99,14 @@ int main(void)
 
     while (!WindowShouldClose() && meuJogo.tela_atual != TELA_SAIR)
     {
-
+        ComandosJogador comandos = {0};
         meuJogo.enter_processado_neste_frame = false;
+        comandos.acao_pulo = false;
 
         // Atualizações
 
         if (meuJogo.tela_atual == TELA_JOGANDO)
         {
-            ComandosJogador comandos = {0};
             int tempo_jogador;
             int i;
 
@@ -113,11 +114,14 @@ int main(void)
 
             if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) comandos.horizontal = 1;
             else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) comandos.horizontal = -1;
+            
 
             if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) comandos.vertical = -1;
             else if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) comandos.vertical = 1;
 
             if (IsKeyPressed(KEY_SPACE)) comandos.acao_pulo = true;
+
+
 
             mundo_atualizar(&meuJogo, comandos, GetFrameTime());
 

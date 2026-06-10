@@ -33,3 +33,8 @@ void jogador_atualizar(Jogador* jogador, const Mapa* mapa, ComandosJogador coman
  * @return false se o jogador estiver sem apoio no tile abaixo
  */
 bool jogador_esta_sobre_plataforma(const Jogador* jogador, const Mapa* mapa);
+/**
+ * @brief Informa se o jogador está parado ou se movendo
+* @param[in] jogador para ver se esta pulando ou nao
+ */
+ bool esta_parado(const ComandosJogador comandos);

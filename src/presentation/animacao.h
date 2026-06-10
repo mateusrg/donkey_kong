@@ -8,10 +8,10 @@
  * @param[in] animacaoPersonagem recebe os dados necessários da animação (frame atual, velocidade, ultimo frame, etc..)
  */
 
-void animation_update(Animacao *animacaoPersonagem);
+void atualiza_animacao(Animacao *animacaoPersonagem);
 
 /**
- * @brief aplica a animation_update em varias entidades
+ * @brief aplica a atualiza_animacao em varias entidades
  * @param[in] jogo 
  */
 
@@ -22,5 +22,5 @@ void animation_update(Animacao *animacaoPersonagem);
  * @param[in] animacaoPersonagem Recebe os dados necessários da animação (frame atual, velocidade, ultimo frame, etc..)
  * @param[in] numero_frames_por_linha Informa para a função quantos frames a imagem possui no total
  */
-Rectangle animation_frame(const Animacao *animacaoPersonagem, int numero_frames_por_linha, const DirecaoHorizontal DirecaoHorizontal);
+Rectangle tamanho_frames(const Animacao *animacaoPersonagem, int numero_frames_por_linha, const DirecaoHorizontal DirecaoHorizontal);
 

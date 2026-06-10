@@ -231,7 +231,7 @@ void desenha_entidades(const Jogo *jogo)
     if(jogo->jogador.ativo == true){
         DrawTexturePro(
             imagens.mario,
-            animation_frame(&jogo->jogador.animacao, FRAMES_POR_LINHA, jogo->jogador.direcao_horizontal),                                            // Define aonde será o corte na imagem original
+            tamanho_frames(&jogo->jogador.animacao, FRAMES_POR_LINHA, jogo->jogador.direcao_horizontal),                                            // Define aonde será o corte na imagem original
             (Rectangle){jogo->jogador.posicao_pixels.x, jogo->jogador.posicao_pixels.y, (float)TILE_SIZE, (float)TILE_SIZE}, // Define aonde ficará o mario no jogo
             (Vector2){0.0f, 0.0f},                                                                                           // Define o eixo principal de rotação
             0.0f,                                                                                                            // define a quantia de rotação
@@ -243,7 +243,7 @@ void desenha_entidades(const Jogo *jogo)
     {
         DrawTexturePro(
             imagens.princesa,
-            animation_frame(&jogo->princesa.animacao, FRAMES_POR_LINHA, jogo->princesa.direcao_horizontal),
+            tamanho_frames(&jogo->princesa.animacao, FRAMES_POR_LINHA, jogo->princesa.direcao_horizontal),
             (Rectangle){jogo->princesa.posicao_pixels.x, jogo->princesa.posicao_pixels.y, (float)TILE_SIZE, (float)TILE_SIZE},
             (Vector2){0.0f, 0.0f},
             0.0f,
@@ -255,7 +255,7 @@ void desenha_entidades(const Jogo *jogo)
     if (jogo->donkey.ativo == true){
     DrawTexturePro(
         imagens.donkey, 
-        animation_frame(&jogo->donkey.animacao, FRAMES_POR_LINHA, jogo->donkey.direcao_horizontal),
+        tamanho_frames(&jogo->donkey.animacao, FRAMES_POR_LINHA, jogo->donkey.direcao_horizontal),
         (Rectangle){jogo->donkey.posicao_pixels.x, jogo->donkey.posicao_pixels.y, (float)TILE_SIZE, (float)TILE_SIZE},
         (Vector2){0.0f, 0.0f},
         0.0f,
@@ -269,7 +269,7 @@ void desenha_entidades(const Jogo *jogo)
             Color cor_inimigo = (jogo->inimigos[num_inimigos].tipo == INIMIGO_VELOZ) ? RED : WHITE;
             DrawTexturePro(
                 imagens.fantasma,
-                animation_frame(&jogo->inimigos[num_inimigos].animacao, FRAMES_POR_LINHA, jogo->inimigos[num_inimigos].direcao_horizontal),
+                tamanho_frames(&jogo->inimigos[num_inimigos].animacao, FRAMES_POR_LINHA, jogo->inimigos[num_inimigos].direcao_horizontal),
                 (Rectangle){jogo->inimigos[num_inimigos].posicao_pixels.x, jogo->inimigos[num_inimigos].posicao_pixels.y, (float)TILE_SIZE, (float)TILE_SIZE},
                 (Vector2){0.0f, 0.0f},
                 0.0f,
@@ -294,6 +294,27 @@ void desenha_game_over(const Jogo* jogo, Font fonte)
     pos_x = ((float)JANELA_LARGURA - tamanho.x) / 2.0f;
     pos_y = ((float)JANELA_ALTURA - tamanho.y) / 2.0f;
     DrawTextWithOutline(fonte, texto, (Vector2){pos_x, pos_y}, TAMANHO_FONTE_DIGITACAO * 2.0f, 2.0f, RED, DARKGRAY, 3.0f);
+
+    Vector2 tam_instrucao = MeasureTextEx(fonte, instrucao, TAMANHO_FONTE_DIGITACAO * 0.6f, 2.0f);
+    DrawTextEx(fonte, instrucao,
+        (Vector2){((float)JANELA_LARGURA - tam_instrucao.x) / 2.0f, pos_y + tamanho.y * 1.8f},
+        TAMANHO_FONTE_DIGITACAO * 0.6f, 2.0f, GRAY);
+}
+
+void desenha_vitoria(const Jogo* jogo, Font fonte)
+{
+    const char* texto = "VOCE VENCEU";
+    const char* instrucao = "Pressione ENTER ou ESPACO para continuar";
+    Vector2 tamanho;
+    float pos_x;
+    float pos_y;
+
+    (void)jogo;
+
+    tamanho = MeasureTextEx(fonte, texto, TAMANHO_FONTE_DIGITACAO * 2.0f, 2.0f);
+    pos_x = ((float)JANELA_LARGURA - tamanho.x) / 2.0f;
+    pos_y = ((float)JANELA_ALTURA - tamanho.y) / 2.0f;
+    DrawTextWithOutline(fonte, texto, (Vector2){pos_x, pos_y}, TAMANHO_FONTE_DIGITACAO * 2.0f, 2.0f, GREEN, DARKGRAY, 3.0f);
 
     Vector2 tam_instrucao = MeasureTextEx(fonte, instrucao, TAMANHO_FONTE_DIGITACAO * 0.6f, 2.0f);
     DrawTextEx(fonte, instrucao,

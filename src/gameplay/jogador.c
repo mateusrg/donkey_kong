@@ -128,7 +128,7 @@ void jogador_inicializar(Jogador* jogador, PosicaoMapa spawn_inicial)
         jogador->velocidade.y        = 0.0f;
         jogador->aceleracao.x        = 0.0f;
         jogador->aceleracao.y        = GRAVIDADE_PADRAO;
-        jogador->direcao_horizontal  = DIRECAO_PARADO;
+        jogador->direcao_horizontal  = DIRECAO_DIREITA;
         jogador->vidas               = VIDAS_INICIAIS;
         jogador->ativo               = true;
         jogador->esta_no_chao        = true;
@@ -151,7 +151,7 @@ void jogador_resetar(Jogador* jogador, PosicaoMapa spawn_inicial)
         jogador->velocidade.y = 0.0f;
         jogador->aceleracao.x = 0.0f;
         jogador->aceleracao.y = GRAVIDADE_PADRAO;
-        jogador->direcao_horizontal = DIRECAO_PARADO;
+        jogador->direcao_horizontal = DIRECAO_DIREITA;
         jogador->ativo = true;
         jogador->esta_no_chao = true;
         jogador->esta_em_escada = false;
@@ -289,11 +289,7 @@ static void jogador_mover_horizontal(Jogador* jogador, const Mapa* mapa, Comando
     int linha;
     bool bloqueado;
 
-    if (comandos.horizontal == 0)
-    {
-        jogador->direcao_horizontal = DIRECAO_PARADO;
-        return;
-    }
+   
 
     nova_x = jogador->posicao_pixels.x + (float)comandos.horizontal * VELOCIDADE_JOGADOR_PADRAO * delta_tempo;
 
@@ -356,14 +352,20 @@ static void jogador_mover_horizontal(Jogador* jogador, const Mapa* mapa, Comando
     jogador->posicao_pixels.x = nova_x;
     jogador->tile.coluna = (int)(nova_x / TILE_SIZE);
 
-    if (comandos.horizontal > 0)
+    if (comandos.horizontal == 0) {
+        // Não tem direção padrao -> Salva a ultima realizada
+        return;
+    }
+    if (comandos.horizontal == 1)
     {
         jogador->direcao_horizontal = DIRECAO_DIREITA;
     }
-    else
+    else if (comandos.horizontal == -1)
     {
         jogador->direcao_horizontal = DIRECAO_ESQUERDA;
     }
+    
+        
 }
 
 // Resolve colisão vertical por intervalo de pixels.
@@ -539,4 +541,8 @@ void jogador_atualizar(Jogador* jogador, const Mapa* mapa, ComandosJogador coman
     // Sincroniza tile com a posição final em pixels
     jogador->tile.linha   = (int)(jogador->posicao_pixels.y / TILE_SIZE);
     jogador->tile.coluna  = (int)(jogador->posicao_pixels.x / TILE_SIZE);
+}
+
+bool esta_parado(const ComandosJogador comandos){
+    return(!IsKeyDown(KEY_LEFT) && !IsKeyDown(KEY_RIGHT) && !comandos.vertical);
 }
