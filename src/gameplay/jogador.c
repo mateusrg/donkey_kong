@@ -503,7 +503,7 @@ void jogador_atualizar(Jogador* jogador, const Mapa* mapa, ComandosJogador coman
     jogador->esta_no_chao = jogador_esta_sobre_plataforma(jogador, mapa);
 
     // Pulo: só possível quando apoiado no chão
-    if (comandos.acao_principal && jogador->esta_no_chao && !jogador->esta_pulando)
+    if (comandos.acao_pulo && jogador->esta_no_chao && !jogador->esta_pulando)
     {
         jogador->velocidade.y = -FORCA_PULO_PADRAO;
         jogador->esta_pulando = true;

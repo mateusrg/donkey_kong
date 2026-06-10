@@ -32,7 +32,7 @@ int main(void)
     Jogo meuJogo = {0};
 
     meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
-    meuJogo.fase_atual = 0;
+    meuJogo.fase_atual = 3;
 
     for (int i = 0; i < MAX_PLACAR; i++)
     {
@@ -117,7 +117,7 @@ int main(void)
             if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) comandos.vertical = -1;
             else if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) comandos.vertical = 1;
 
-            if (IsKeyPressed(KEY_SPACE)) comandos.acao_principal = true;
+            if (IsKeyPressed(KEY_SPACE)) comandos.acao_pulo = true;
 
             mundo_atualizar(&meuJogo, comandos, GetFrameTime());
 
@@ -190,29 +190,8 @@ int main(void)
             }
         }
 
-        atualiza_entidades(&meuJogo);
+        atualiza_anim_entidades(&meuJogo);
 
-        if (IsKeyPressed(KEY_ENTER) && meuJogo.tela_atual == TELA_JOGANDO && !meuJogo.enter_processado_neste_frame)
-        {
-
-            int tempoJogador = (int)GetTime() - meuJogo.tempos_telas.segundos_ate_jogar;
-
-            meuJogo.tempos_telas.segundos_ate_fim_partida = tempoJogador;
-
-            if (placar_elegivel(meuJogo.placar, MAX_PLACAR, tempoJogador))
-            {
-
-                meuJogo.enter_processado_neste_frame = true;
-
-                meuJogo.tela_atual = TELA_DIGITANDO_NOME;
-            }
-
-            else
-            {
-
-                meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
-            }
-        }
 
         // --- DESENHO ---
 

@@ -199,31 +199,15 @@ void desenha_menu_principal(Jogo *jogo, Font fonte_jogo, Font fonte_botoes, Text
     // Retângulo Jogar
     if(!(CheckCollisionPointRec(posicao_mouse, retangulo_jogar) || CheckCollisionPointRec(posicoes_teclado[indice_teclado_inicial], retangulo_jogar))){
         DrawRectangleRounded(retangulo_jogar, 0.2, 4, GREEN);
-    } else {
-        DrawRectangleRounded(retangulo_jogar, 0.2, 4, RED);
-        DrawTexturePro(mario, animation_frame(&jogo->jogador.animacao, FRAMES_POR_LINHA), 
-                      (Rectangle){pos_mario.x, pos_mario.y, (float)TILE_SIZE, (float)TILE_SIZE}, 
-                      (Vector2){0.0f, 0.0f}, 0.0f, WHITE);
-    }
+    } 
 
     // Retângulo Placar
     if(!(CheckCollisionPointRec(posicao_mouse, retangulo_placar) || CheckCollisionPointRec(posicoes_teclado[indice_teclado_inicial], retangulo_placar))){
         DrawRectangleRounded(retangulo_placar, 0.2, 4, GREEN);
-    } else {
-        DrawRectangleRounded(retangulo_placar, 0.2, 4, RED);
-        DrawTexturePro(princesa, animation_frame(&jogo->princesa.animacao, FRAMES_POR_LINHA), 
-                      (Rectangle){pos_princesa.x, pos_princesa.y, (float)TILE_SIZE, (float)TILE_SIZE}, 
-                      (Vector2){0.0f, 0.0f}, 0.0f, WHITE);
-    }
-
+    } 
     // Retângulo Sair
     if(!(CheckCollisionPointRec(posicao_mouse, retangulo_sair) || CheckCollisionPointRec(posicoes_teclado[indice_teclado_inicial], retangulo_sair))){
         DrawRectangleRounded(retangulo_sair, 0.2, 4, GREEN);
-    } else {
-        DrawRectangleRounded(retangulo_sair, 0.2, 4, RED);
-        DrawTexturePro(donkey, animation_frame(&jogo->donkey.animacao, FRAMES_POR_LINHA), 
-                      (Rectangle){pos_donkey.x, pos_donkey.y, (float)TILE_SIZE, (float)TILE_SIZE}, 
-                      (Vector2){0.0f, 0.0f}, 0.0f, WHITE);
     }
 
     // Desenhar contornos dos retângulos

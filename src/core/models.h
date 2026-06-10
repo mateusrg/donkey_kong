@@ -38,7 +38,7 @@ typedef struct ComandosJogador
 {
     int horizontal; /**< Direção horizontal desejada pelo jogador */
     int vertical; /**< Direção vertical desejada pelo jogador */
-    bool acao_principal; /**< Estado da ação principal no frame atual */
+    bool acao_pulo; /**< Estado da ação principal no frame atual */
 } ComandosJogador;
 
 
@@ -105,6 +105,7 @@ typedef struct Donkey
     PosicaoMapa spawn_inicial;
     Vetor2D posicao_pixels;
     Animacao animacao;
+    DirecaoHorizontal direcao_horizontal;
     bool ativo; // fim, pois a princesa não se moverá
  } Princesa;
 /**

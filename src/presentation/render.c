@@ -231,7 +231,7 @@ void desenha_entidades(const Jogo *jogo)
     if(jogo->jogador.ativo == true){
         DrawTexturePro(
             imagens.mario,
-            animation_frame(&jogo->jogador.animacao, FRAMES_POR_LINHA),                                            // Define aonde será o corte na imagem original
+            animation_frame(&jogo->jogador.animacao, FRAMES_POR_LINHA, jogo->jogador.direcao_horizontal),                                            // Define aonde será o corte na imagem original
             (Rectangle){jogo->jogador.posicao_pixels.x, jogo->jogador.posicao_pixels.y, (float)TILE_SIZE, (float)TILE_SIZE}, // Define aonde ficará o mario no jogo
             (Vector2){0.0f, 0.0f},                                                                                           // Define o eixo principal de rotação
             0.0f,                                                                                                            // define a quantia de rotação
@@ -243,7 +243,7 @@ void desenha_entidades(const Jogo *jogo)
     {
         DrawTexturePro(
             imagens.princesa,
-            animation_frame(&jogo->princesa.animacao, FRAMES_POR_LINHA),
+            animation_frame(&jogo->princesa.animacao, FRAMES_POR_LINHA, jogo->princesa.direcao_horizontal),
             (Rectangle){jogo->princesa.posicao_pixels.x, jogo->princesa.posicao_pixels.y, (float)TILE_SIZE, (float)TILE_SIZE},
             (Vector2){0.0f, 0.0f},
             0.0f,
@@ -251,10 +251,11 @@ void desenha_entidades(const Jogo *jogo)
         );
     }
 
+
     if (jogo->donkey.ativo == true){
     DrawTexturePro(
         imagens.donkey, 
-        animation_frame(&jogo->donkey.animacao, FRAMES_POR_LINHA),
+        animation_frame(&jogo->donkey.animacao, FRAMES_POR_LINHA, jogo->donkey.direcao_horizontal),
         (Rectangle){jogo->donkey.posicao_pixels.x, jogo->donkey.posicao_pixels.y, (float)TILE_SIZE, (float)TILE_SIZE},
         (Vector2){0.0f, 0.0f},
         0.0f,
@@ -268,7 +269,7 @@ void desenha_entidades(const Jogo *jogo)
             Color cor_inimigo = (jogo->inimigos[num_inimigos].tipo == INIMIGO_VELOZ) ? RED : WHITE;
             DrawTexturePro(
                 imagens.fantasma,
-                animation_frame(&jogo->inimigos[num_inimigos].animacao, 6),
+                animation_frame(&jogo->inimigos[num_inimigos].animacao, FRAMES_POR_LINHA, jogo->inimigos[num_inimigos].direcao_horizontal),
                 (Rectangle){jogo->inimigos[num_inimigos].posicao_pixels.x, jogo->inimigos[num_inimigos].posicao_pixels.y, (float)TILE_SIZE, (float)TILE_SIZE},
                 (Vector2){0.0f, 0.0f},
                 0.0f,

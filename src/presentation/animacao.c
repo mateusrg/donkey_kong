@@ -1,4 +1,5 @@
 #include "animacao.h"
+#include <math.h>
 #define LARGURA_IMAGENS 900
 #define ALTURA_IMAGENS 300
 
@@ -18,22 +19,31 @@ void animation_update(Animacao *animacaoPersonagem){
         animacaoPersonagem->cur = animacaoPersonagem->first;
     }
 }
-Rectangle animation_frame(const Animacao *animacaoPersonagem, int numero_frames_por_linha){
+Rectangle animation_frame(const Animacao *animacaoPersonagem, int numero_frames_por_linha, const DirecaoHorizontal DirecaoHorizontal){
     // O tamanho real calculado pela divisão da imagem
-    float tamanhoFrame = (float)LARGURA_IMAGENS / numero_frames_por_linha;
+    float tamanhoFrameLargura = (float)LARGURA_IMAGENS / numero_frames_por_linha;
+    float tamanhoFrameAltura = (float)LARGURA_IMAGENS / numero_frames_por_linha;
     
-    float x = (float)(animacaoPersonagem->cur % numero_frames_por_linha) * tamanhoFrame;
-    float y = (float)(animacaoPersonagem->cur / numero_frames_por_linha) * tamanhoFrame;
+    float x = (float)(animacaoPersonagem->cur % numero_frames_por_linha) * tamanhoFrameLargura;
+    float y = (float)(animacaoPersonagem->cur / numero_frames_por_linha) * tamanhoFrameAltura;
+
+    if(DirecaoHorizontal == DIRECAO_DIREITA){
+        tamanhoFrameLargura = fabs(tamanhoFrameLargura);
+    }
+
+    if(DirecaoHorizontal == DIRECAO_ESQUERDA){
+        tamanhoFrameLargura *= (-1);
+    }
 
     return (Rectangle){  
         .x = x, 
         .y = y, 
-        .width = tamanhoFrame,
-        .height = tamanhoFrame,
+        .width = tamanhoFrameLargura,
+        .height = tamanhoFrameAltura,
     };
 }
 
-void atualiza_entidades(Jogo *jogo) {
+void atualiza_anim_entidades(Jogo *jogo) {
     // Pega o tempo que passou desde o último frame (Delta Time)
     // Nota: Se a sua função animation_update já chama GetFrameTime() lá dentro, 
     // você não precisa passar o dt aqui.

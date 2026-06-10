@@ -13,6 +13,7 @@ static Vetor2D inimigo_tile_para_pixels(PosicaoMapa tile)
 {
     Vetor2D posicao_pixels;
 
+    
     posicao_pixels.x = (float)(tile.coluna * TILE_SIZE);
     posicao_pixels.y = (float)(tile.linha * TILE_SIZE);
 
