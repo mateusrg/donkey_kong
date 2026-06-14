@@ -81,48 +81,27 @@ void render_inicializar(Jogo* jogo) {
     fonte_demais_textos = LoadFontEx("assets/fontes/DemaisTextos.ttf", TAMANHO_FONTE_PRINCIPAL, NULL, 0);
     //Inicializando as structs das animações
     //Animacao mario:
-    jogo->jogador.animacao = (Animacao){
-    .first = 0,
-    .last = 2,
-    .cur = 0,
-    .speed = 0.1,
-    .duration_left = 0.1,
-    .type = STOPPED,
-    .step = 1,
-    };
+    animacao_inicializar(&jogo->jogador.animacao);
 
     //Animacao donkey:
-    jogo ->donkey.animacao = (Animacao){
-    .first = 0,
-    .last = 2,
-    .cur = 0,
-    .speed = 0.1,
-    .duration_left = 0.1,
-    .type = STOPPED,
-    .step = 1,
-    };
+    animacao_inicializar(&jogo->donkey.animacao);
 
     //Animacao princesa:
-    jogo -> princesa.animacao = (Animacao){
-    .first = 0,
-    .last = 2,
-    .cur = 0,
-    .speed = 0.1,
-    .duration_left = 0.1,
-    .type = STOPPED,
-    .step = 1,
-    };
+    animacao_inicializar(&jogo->princesa.animacao);
+
     //Animacao fantasma:
-    for(int num_inimigos = 0; num_inimigos < jogo->quantidade_inimigos; num_inimigos++){
-        jogo->inimigos[num_inimigos].animacao = (Animacao){
-        .first = 0,
-        .last = 2,
-        .cur = 0,
-        .speed = 0.1f,
-        .duration_left = 0.1f,
-        .type = STOPPED,
-        .step = 1,
-        };
+    render_reinicializar_animacoes_inimigos(jogo);
+}
+
+// Reinicia as animações dos inimigos atuais — usado após carregar uma fase,
+// pois render_inicializar é chamado antes de quantidade_inimigos ser preenchida.
+void render_reinicializar_animacoes_inimigos(Jogo* jogo)
+{
+    int i;
+
+    for (i = 0; i < jogo->quantidade_inimigos; i++)
+    {
+        animacao_inicializar(&jogo->inimigos[i].animacao);
     }
 }
 
@@ -408,6 +387,35 @@ static void desenha_powerups(const Jogo* jogo)
     }
 }
 
+void desenha_menu_pausa(int opcao_selecionada)
+{
+    const char* titulo = "PAUSADO";
+    const char* opcoes[3] = {"CONTINUAR", "VOLTAR AO MENU", "SAIR"};
+    float tamanho_fonte = TAMANHO_FONTE_DIGITACAO;
+    float gap = tamanho_fonte * 1.8f;
+    Vector2 tamanho_titulo;
+    Vector2 pos;
+    int i;
+
+    // Escurece o jogo congelado por trás para destacar o menu
+    DrawRectangle(0, 0, JANELA_LARGURA, JANELA_ALTURA, (Color){0, 0, 0, 180});
+
+    tamanho_titulo = MeasureTextEx(fonte_demais_textos, titulo, tamanho_fonte * 1.5f, 2.0f);
+    pos.x = ((float)JANELA_LARGURA - tamanho_titulo.x) / 2.0f;
+    pos.y = ((float)JANELA_ALTURA - (gap * 4.0f)) / 2.0f;
+    DrawTextWithOutline(fonte_demais_textos, titulo, pos, tamanho_fonte * 1.5f, 2.0f, WHITE, DARKGRAY, 2.0f);
+
+    pos.y += gap * 1.5f;
+    for (i = 0; i < 3; i++)
+    {
+        Vector2 tamanho_opcao = MeasureTextEx(fonte_demais_textos, opcoes[i], tamanho_fonte, 2.0f);
+        pos.x = ((float)JANELA_LARGURA - tamanho_opcao.x) / 2.0f;
+        Color cor = (i == opcao_selecionada) ? YELLOW : WHITE;
+        DrawTextEx(fonte_demais_textos, opcoes[i], pos, tamanho_fonte, 2.0f, cor);
+        pos.y += gap;
+    }
+}
+
 // Função que dita qual tela será desenhada no momento
 void render_desenhar(Jogo* jogo){
     BeginDrawing();
@@ -420,6 +428,14 @@ void render_desenhar(Jogo* jogo){
             desenha_elementos_HUD(jogo);
             desenha_entidades(jogo);
             break;
+        case TELA_PAUSADO:
+            ClearBackground(BLACK);
+            desenha_mapa(jogo);
+            desenha_powerups(jogo);
+            desenha_elementos_HUD(jogo);
+            desenha_entidades(jogo);
+            desenha_menu_pausa(jogo->opcao_pausa);
+            break;
         case TELA_MENU_PRINCIPAL:
             ClearBackground(LIGHTGRAY);
             desenha_menu_principal(jogo, fonte_jogo, fonte_demais_textos, imagens.mario, imagens.princesa, imagens.donkey);
@@ -429,8 +445,8 @@ void render_desenhar(Jogo* jogo){
             desenha_tela_ranking(jogo, fonte_jogo, fonte_demais_textos);
             break;
         case TELA_VITORIA:
-            ClearBackground(WHITE);
-            desenha_proxima_fase(jogo, fonte_demais_textos);
+            ClearBackground(BLACK);
+            desenha_vitoria(jogo, fonte_demais_textos);
             break;
         case TELA_GAME_OVER:
             ClearBackground(BLACK);
@@ -457,6 +473,9 @@ void render_encerrar(void) {
     UnloadTexture(imagens.chao);
     UnloadTexture(imagens.escada);
     UnloadTexture(imagens.porta);
+    UnloadTexture(imagens.relogio);
+    UnloadTexture(imagens.coracao);
+    UnloadTexture(imagens.estrela);
 
     UnloadFont(fonte_jogo);
     UnloadFont(fonte_demais_textos);

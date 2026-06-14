@@ -11,6 +11,12 @@
 void atualiza_animacao(Animacao *animacaoPersonagem);
 
 /**
+ * @brief Reinicia os valores padrão de uma animação para o estado inicial
+ * @param[in,out] animacaoPersonagem Animação que será reinicializada
+ */
+void animacao_inicializar(Animacao *animacaoPersonagem);
+
+/**
  * @brief aplica a atualiza_animacao em varias entidades
  * @param[in] jogo 
  */

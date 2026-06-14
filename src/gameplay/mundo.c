@@ -36,8 +36,6 @@ bool mundo_carregar_fase(Jogo* jogo)
         inimigo_inicializar(&jogo->inimigos[i], jogo->inimigos[i].spawn_inicial, jogo->inimigos[i].tipo);
     }
 
-    jogo->bonus_tempo_segundos = 0;
-
     return true;
 }
 

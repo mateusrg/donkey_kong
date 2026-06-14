@@ -147,6 +147,7 @@ typedef struct TemposTelas
 {
     float segundos_ate_jogar; /**< Tempo acumulado até o jogador começar */
     float segundos_ate_fim_partida; /**< Tempo acumulado até o fim da partida */
+    float segundos_ate_pausar; /**< Momento em que o jogo foi pausado, usado para não contar o tempo parado */
 } TemposTelas;
 
 /**
@@ -172,6 +173,7 @@ typedef struct Jogo
     PowerUp powerups[MAX_POWERUPS]; /**< Power-ups ativos na fase atual */
     int quantidade_powerups; /**< Quantidade válida de power-ups no vetor */
     int bonus_tempo_segundos; /**< Segundos acumulados de redução de tempo por power-ups */
+    int opcao_pausa; /**< Opção selecionada no menu de pausa */
 } Jogo;
 
 /**

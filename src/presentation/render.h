@@ -13,6 +13,12 @@ Texture2D redimensiona_imagem_estatica(const char* nome_arquivo);
 void render_inicializar(Jogo* jogo);
 
 /**
+ * @brief Reinicia as structs de animação dos inimigos carregados na fase atual
+ * @param[in,out] jogo Estado principal com os inimigos cujas animações serão resetadas
+ */
+void render_reinicializar_animacoes_inimigos(Jogo* jogo);
+
+/**
  * @brief Desenha o fundo da tela
  * @param[in] Jogo Estado principal consultado para renderização
  */
@@ -42,9 +48,10 @@ void desenha_elementos_HUD(Jogo* jogo);
 
 /**
  * @brief Desenha o layout do menu de pausa (continuar, voltar para o menu ou sair do jogo)
+ * @param[in] opcao_selecionada Índice da opção atualmente destacada no menu
  */
 
- void desenha_menu_pausa(void);
+ void desenha_menu_pausa(int opcao_selecionada);
 
 
 /**

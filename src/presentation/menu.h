@@ -65,6 +65,12 @@ void desenha_menu_principal(Jogo *jogo, Font fonte_jogo, Font fonte_botoes, Text
  */
 void desenha_menu_nome(Jogo *jogo, Font fonte_textos);
 
+/**
+ * @brief Processa input e transições do menu de pausa
+ * @param[in,out] jogo Estado principal que será lido e alterado pelo menu
+ */
+void atualiza_menu_pausa(Jogo *jogo);
+
 Vector2 determina_posicao_ranking(TipoPlacar placar_atual, char opcao, int indice, Font fonte_nomes, Rectangle retangulo_calculos);
 /**
  * @brief Renderiza os retângulos da tabela de ranking

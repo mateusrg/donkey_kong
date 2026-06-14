@@ -16,7 +16,9 @@
 
 #include "presentation/animacao.h"
 
-#include "presentation/render.h" // Certifique-se de que o caminho está correto
+#include "presentation/render.h"
+
+#include "presentation/menu.h"
 
 #include "gameplay/mundo.h"
 
@@ -33,7 +35,8 @@ int main(void)
     
 
     meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
-    meuJogo.fase_atual = 2;
+    meuJogo.fase_atual = 0;
+    meuJogo.opcao_pausa = -1;
 
     for (int i = 0; i < MAX_PLACAR; i++)
     {
@@ -51,17 +54,17 @@ int main(void)
         return 1;
     }
 
-    /*
+    render_reinicializar_animacoes_inimigos(&meuJogo);
 
-    if(!placar_salvar(CAMINHO_ARQUIVO_PLACAR, meuJogo.placar, MAX_PLACAR)){
+    
+    // if(!placar_salvar(CAMINHO_ARQUIVO_PLACAR, meuJogo.placar, MAX_PLACAR)){
 
-        printf("Erro ao gerar novo arquivo");
+    //     printf("Erro ao gerar novo arquivo");
 
-        return 1;
+    //     return 1;
 
-    }
+    // }
 
-    */
 
     if (!placar_carregar(CAMINHO_ARQUIVO_PLACAR, meuJogo.placar, MAX_PLACAR))
     {
@@ -84,10 +87,11 @@ int main(void)
     // 3. Inicializa a Janela
 
     InitWindow(JANELA_LARGURA, JANELA_ALTURA, "Mario vs Donkey Kong");
+    SetExitKey(KEY_NULL); // ESC não fecha a janela
 
     SetTargetFPS(60);
 
-    // 4. Inicializa as texturas (chama aquela sua função que redimensiona)
+    // 4. Inicializa as texturas
 
     render_inicializar(&meuJogo);
 
@@ -108,7 +112,6 @@ int main(void)
         if (meuJogo.tela_atual == TELA_JOGANDO)
         {
             int tempo_jogador;
-            int i;
 
             atualizar_audio_musica();
 
@@ -124,7 +127,10 @@ int main(void)
 
             if (IsKeyPressed(KEY_SPACE) && jogador_esta_sobre_plataforma(&meuJogo.jogador, &meuJogo.mapa)){ comandos.acao_pulo = true; tocar_audio_efeito("pulo");}
 
-
+            if (IsKeyPressed(KEY_TAB) || IsKeyPressed(KEY_ESCAPE))
+            {
+                meuJogo.tela_atual = TELA_PAUSADO;
+            }
 
             mundo_atualizar(&meuJogo, comandos, GetFrameTime());
 
@@ -138,11 +144,12 @@ int main(void)
                 {
                     // Passa direto para o jogo sem tela intermediária.
                     // Não reseta segundos_ate_jogar: o tempo acumula entre fases.
+                    render_reinicializar_animacoes_inimigos(&meuJogo);
                     meuJogo.tela_atual = TELA_JOGANDO;
                 }
                 else
                 {
-                    // Sem mais fases — fim de jogo completo
+                    // Sem mais fases - fim de jogo completo
                     tempo_jogador = (int)GetTime() - (int)meuJogo.tempos_telas.segundos_ate_jogar - meuJogo.bonus_tempo_segundos;
                     if (tempo_jogador < 0) tempo_jogador = 0;
                     meuJogo.tempos_telas.segundos_ate_fim_partida = (float)tempo_jogador;
@@ -150,17 +157,12 @@ int main(void)
                     // Reseta para fase 0 e vidas antes de qualquer transição
                     meuJogo.fase_atual = 0;
                     mundo_carregar_fase(&meuJogo);
+                    render_reinicializar_animacoes_inimigos(&meuJogo);
                     meuJogo.jogador.vidas = VIDAS_INICIAIS;
+                    meuJogo.bonus_tempo_segundos = 0;
 
-                    if (placar_elegivel(meuJogo.placar, MAX_PLACAR, tempo_jogador))
-                    {
-                        meuJogo.enter_processado_neste_frame = true;
-                        meuJogo.tela_atual = TELA_DIGITANDO_NOME;
-                    }
-                    else
-                    {
-                        meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
-                    }
+                    meuJogo.enter_processado_neste_frame = true;
+                    meuJogo.tela_atual = TELA_VITORIA;
                 }
             }
             else if (!meuJogo.jogador.ativo)
@@ -172,7 +174,9 @@ int main(void)
 
                 meuJogo.fase_atual = 0;
                 mundo_carregar_fase(&meuJogo);
+                render_reinicializar_animacoes_inimigos(&meuJogo);
                 meuJogo.jogador.vidas = VIDAS_INICIAIS;
+                meuJogo.bonus_tempo_segundos = 0;
 
                 meuJogo.enter_processado_neste_frame = true;
                 meuJogo.tela_atual = TELA_GAME_OVER;
@@ -180,6 +184,16 @@ int main(void)
         }
 
         if (meuJogo.tela_atual == TELA_GAME_OVER)
+        {
+            atualizar_audio_musica();
+            if (!meuJogo.enter_processado_neste_frame &&
+                (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE)))
+            {
+                meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
+            }
+        }
+
+        if (meuJogo.tela_atual == TELA_VITORIA)
         {
             atualizar_audio_musica();
             if (!meuJogo.enter_processado_neste_frame &&
@@ -197,7 +211,15 @@ int main(void)
             }
         }
 
-        atualiza_anim_entidades(&meuJogo);
+        if (meuJogo.tela_atual == TELA_PAUSADO)
+        {
+            atualiza_menu_pausa(&meuJogo);
+        }
+
+        if (meuJogo.tela_atual != TELA_PAUSADO)
+        {
+            atualiza_anim_entidades(&meuJogo);
+        }
 
 
         // --- DESENHO ---
@@ -208,8 +230,6 @@ int main(void)
     }
 
     // 5. Finalização
-
-    // --- Na finalização da sua main.c ---
 
     WaitTime(0.8f);
 

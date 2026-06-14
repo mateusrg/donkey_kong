@@ -1,5 +1,7 @@
 #pragma once
 
+#include <math.h>
+
 /** Quantidade de linhas disponíveis no mapa */
 #define MAPA_LINHAS 30
 
@@ -73,24 +75,31 @@
 /** Quantidade inicial de vidas do jogador */
 #define VIDAS_INICIAIS 3
 
-/** Velocidade horizontal padrão do jogador em pixels por segundo */
-#define VELOCIDADE_JOGADOR_PADRAO 180.0f
+/** Velocidade horizontal do jogador em tiles por segundo */
+#define VELOCIDADE_JOGADOR_TILES 6.0f
+#define VELOCIDADE_JOGADOR_PADRAO (VELOCIDADE_JOGADOR_TILES * TILE_SIZE)
 
-/** Velocidade vertical padrão ao subir ou descer escadas em pixels por segundo */
-#define VELOCIDADE_ESCADA_PADRAO 150.0f
+/** Velocidade vertical ao subir ou descer escadas em tiles por segundo */
+#define VELOCIDADE_ESCADA_TILES 5.0f
+#define VELOCIDADE_ESCADA_PADRAO (VELOCIDADE_ESCADA_TILES * TILE_SIZE)
 
-/** Velocidade horizontal padrão do inimigo em pixels por segundo */
-#define VELOCIDADE_INIMIGO_PADRAO 90.0f
+/** Velocidade horizontal do inimigo em tiles por segundo */
+#define VELOCIDADE_INIMIGO_TILES 3.0f
+#define VELOCIDADE_INIMIGO_PADRAO (VELOCIDADE_INIMIGO_TILES * TILE_SIZE)
 
-/** Aceleração horizontal padrão do jogador em pixels por segundo ao quadrado */
-#define ACELERACAO_HORIZONTAL_PADRAO 1200.0f
+/** Aceleração horizontal do jogador em tiles por segundo ao quadrado */
+#define ACELERACAO_HORIZONTAL_TILES 40.0f
+#define ACELERACAO_HORIZONTAL_PADRAO (ACELERACAO_HORIZONTAL_TILES * TILE_SIZE)
 
-/** Gravidade padrão aplicada ao jogador em pixels por segundo ao quadrado */
-#define GRAVIDADE_PADRAO 1800.0f
+/** Gravidade aplicada ao jogador em tiles por segundo ao quadrado */
+#define GRAVIDADE_TILES 60.0f
+#define GRAVIDADE_PADRAO (GRAVIDADE_TILES * TILE_SIZE)
 
+/** Altura do pulo em tiles */
+#define ALTURA_PULO_TILES 2.0f
 /** Impulso vertical inicial do pulo em pixels por segundo */
-/** altura maxima = v0^2 / (2 * GRAVIDADE) => 480^2 / 3600 = 64px ~ 2 tiles */
-#define FORCA_PULO_PADRAO 480.0f
+/** v0 = sqrt(2 * GRAVIDADE * ALTURA_PULO_TILES * TILE_SIZE) */
+#define FORCA_PULO_PADRAO (sqrtf(2.0f * GRAVIDADE_PADRAO * ALTURA_PULO_TILES * TILE_SIZE))
 
 /** Intervalo base entre passos de animação do inimigo em segundos */
 #define INIMIGO_INTERVALO_PASSO 0.30f

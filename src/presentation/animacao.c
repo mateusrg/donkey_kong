@@ -11,7 +11,7 @@ void atualiza_animacao(Animacao *animacaoPersonagem){
 
     if(animacaoPersonagem->duration_left <= 0.0f){
         animacaoPersonagem->duration_left = animacaoPersonagem->speed;
-    
+
     // Incrementa
         animacaoPersonagem->cur += animacaoPersonagem->step;
     }
@@ -19,6 +19,17 @@ void atualiza_animacao(Animacao *animacaoPersonagem){
     if(animacaoPersonagem->cur > animacaoPersonagem->last){
         animacaoPersonagem->cur = animacaoPersonagem->first;
     }
+}
+
+void animacao_inicializar(Animacao *animacaoPersonagem)
+{
+    animacaoPersonagem->first = 0;
+    animacaoPersonagem->last = 2;
+    animacaoPersonagem->cur = 0;
+    animacaoPersonagem->speed = 0.1f;
+    animacaoPersonagem->duration_left = 0.1f;
+    animacaoPersonagem->type = STOPPED;
+    animacaoPersonagem->step = 1;
 }
 Rectangle tamanho_frames(const Animacao *animacaoPersonagem, int numero_frames_por_linha, const DirecaoHorizontal DirecaoHorizontal){
     // O tamanho real calculado pela divisão da imagem

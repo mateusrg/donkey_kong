@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "../io/placar_io.h"
 #include "../core/constants.h"
+#include "../core/jogo.h"
 
 #define QUANTIA_BOTOES 4
 
@@ -166,7 +167,8 @@ void desenha_menu_principal(Jogo *jogo, Font fonte_jogo, Font fonte_botoes, Text
     
     // ===== POSICIONAMENTO DO TÍTULO =====
     float tamanho_fonte_titulo = TAMANHO_FONTE_TITULO_MENU;
-    Vector2 posicao_texto = {x_centro - 300.0f, (float)JANELA_ALTURA * 0.1f};
+    Vector2 tamanho_titulo = MeasureTextEx(fonte_jogo, "Mario vs. Donkey Kong", tamanho_fonte_titulo, 2.0f);
+    Vector2 posicao_texto = {x_centro - tamanho_titulo.x / 2.0f, (float)JANELA_ALTURA * 0.1f};
     Vector2 posicao_sombra = {posicao_texto.x + 8.0f, posicao_texto.y + 8.0f};
 
     // ===== DEFINIR TAMANHO DOS RETÂNGULOS =====
@@ -273,25 +275,28 @@ Vector2 determina_posicao_ranking(TipoPlacar placar_atual, char opcao, int indic
     {
     case 'n':
     case 'N':
+    {
         Vector2 tamanho_texto = MeasureTextEx(fonte_nomes, placar_atual.nome, TAMANHO_FONTE_NOMES_RANKING,  2.0f);
         Vector2 posicao_texto = {
             retangulo_calculos.x + (retangulo_calculos.width - tamanho_texto.x) / 2.0f,
             retangulo_calculos.y + (retangulo_calculos.height - tamanho_texto.y) / 2.0f + (retangulo_calculos.height * indice)
         };
         return posicao_texto;
-        break;
+    }
     case 't':
     case 'T':
+    {
         Vector2 tamanho_texto_tempo = MeasureTextEx(fonte_nomes, TextFormat("%d",placar_atual.time), TAMANHO_FONTE_NOMES_RANKING,  2.0f);
         Vector2 posicao_texto_dois = {
             retangulo_calculos.x + (retangulo_calculos.width - tamanho_texto_tempo.x) / 2.0f + retangulo_calculos.width,
             retangulo_calculos.y + (retangulo_calculos.height - tamanho_texto_tempo.y) / 2.0f + (retangulo_calculos.height * indice)
         };
         return posicao_texto_dois;
-    
+    }
     default:
         break;
     }
+    return (Vector2){0.0f, 0.0f};
 }
 
 void desenha_retangulos_menores_ranking(const Rectangle retangulo_exterior, Font fonte_nomes, Jogo* jogo){
@@ -508,9 +513,10 @@ void desenha_menu_nome(Jogo *jogo, Font fonte_textos){
     }
 
     // ===== DESENHAR RETÂNGULO DE ENTRADA =====
-    Vector2 tamanho_titulo = MeasureTextEx(fonte_textos, "EEEEEEEEEEEEEEEE", tamanho_fonte, 2.0f);
-    float retangulo_nome_base = tamanho_titulo.x + tamanho_titulo.x * 0.05f;
-    float retangulo_nome_altura = tamanho_titulo.y + tamanho_titulo.y;
+    // Usa o label como referência para manter o retângulo proporcional ao TILE_SIZE.
+    Vector2 tamanho_label = MeasureTextEx(fonte_textos, "DIGITE O SEU NOME", tamanho_fonte, 2.0f);
+    float retangulo_nome_base = tamanho_label.x * 1.2f;
+    float retangulo_nome_altura = tamanho_label.y * 2.0f;
     float retangulo_nome_x = JANELA_LARGURA / 2 - retangulo_nome_base / 2;
     float retangulo_nome_y = JANELA_ALTURA / 2 - retangulo_nome_altura / 2;
 
@@ -528,13 +534,11 @@ void desenha_menu_nome(Jogo *jogo, Font fonte_textos){
     DrawTextEx(fonte_textos, nomes, pos_escrita_nome, tamanho_fonte, 4.0f, BLACK);
 
     // ===== DESENHAR LABEL =====
-    float tamanho_fonte_label = tamanho_fonte;
-    Vector2 tamanho_label = MeasureTextEx(fonte_textos, "DIGITE O SEU NOME", tamanho_fonte_label, 2.0f);
     float pos_label_x = JANELA_LARGURA / 2.0f - tamanho_label.x / 2.0f;
     float pos_label_y = (JANELA_ALTURA / 2.0f) - retangulo_nome_altura;
     Vector2 pos_label = {pos_label_x, pos_label_y};
 
-    DrawTextWithOutline(fonte_textos, "DIGITE O SEU NOME", pos_label, tamanho_fonte_label, 2.0f, RED, GRAY, 1.0f);
+    DrawTextWithOutline(fonte_textos, "DIGITE O SEU NOME", pos_label, tamanho_fonte, 2.0f, RED, GRAY, 1.0f);
 
     // ===== LÓGICA DE CONFIRMAÇÃO =====
     if(IsKeyPressed(KEY_ENTER) && jogo->tela_atual == TELA_DIGITANDO_NOME && !jogo->enter_processado_neste_frame){
@@ -547,5 +551,60 @@ void desenha_menu_nome(Jogo *jogo, Font fonte_textos){
 
         jogo->tela_atual = TELA_MENU_PRINCIPAL;
         jogo->enter_processado_neste_frame = true;
+    }
+}
+
+void atualiza_menu_pausa(Jogo *jogo)
+{
+    if (jogo->opcao_pausa == -1)
+    {
+        jogo->opcao_pausa = 0;
+        jogo->tempos_telas.segundos_ate_pausar = GetTime();
+        return; // primeiro frame de pausa: apenas registra, não processa teclas
+    }
+
+    if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W))
+    {
+        jogo->opcao_pausa--;
+        if (jogo->opcao_pausa < 0)
+        {
+            jogo->opcao_pausa = 2;
+        }
+        tocar_audio_efeito("troca_opcao");
+    }
+    else if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S))
+    {
+        jogo->opcao_pausa++;
+        if (jogo->opcao_pausa > 2)
+        {
+            jogo->opcao_pausa = 0;
+        }
+        tocar_audio_efeito("troca_opcao");
+    }
+
+    if (IsKeyPressed(KEY_TAB) || IsKeyPressed(KEY_ESCAPE))
+    {
+        jogo->tempos_telas.segundos_ate_jogar += GetTime() - jogo->tempos_telas.segundos_ate_pausar;
+        jogo->tela_atual = TELA_JOGANDO;
+        jogo->opcao_pausa = -1;
+    }
+    else if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE))
+    {
+        if (jogo->opcao_pausa == 0)
+        {
+            jogo->tempos_telas.segundos_ate_jogar += GetTime() - jogo->tempos_telas.segundos_ate_pausar;
+            jogo->tela_atual = TELA_JOGANDO;
+        }
+        else if (jogo->opcao_pausa == 1)
+        {
+            jogo_reiniciar_partida(jogo);
+            jogo->tela_atual = TELA_MENU_PRINCIPAL;
+        }
+        else if (jogo->opcao_pausa == 2)
+        {
+            jogo->tela_atual = TELA_SAIR;
+        }
+
+        jogo->opcao_pausa = -1;
     }
 }
