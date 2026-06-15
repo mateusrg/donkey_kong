@@ -19,11 +19,18 @@ void DrawTextWithOutline(Font font, const char *text, Vector2 position, float fo
 
 /**
  * @brief Atualiza a posição do cursor do teclado com base em inputs de setas
- * @param posicoes_teclado Vetor de posições possíveis
  * @param indice Índice atual do cursor
  */
-void determina_posicoes_inputs(Vector2 *posicoes_teclado, int *indice);
+void determina_posicoes_inputs(int *indice);
+
+/**
+ * @brief Lê o próximo caractere pressionado pelo jogador para digitação do nome
+ */
 void atualiza_input_nome(void);
+
+/**
+ * @brief Toca o som de digitação ao pressionar backspace ou qualquer caractere
+ */
 void toca_audio_digitando(void);
 
 /**
@@ -35,6 +42,14 @@ void toca_audio_digitando(void);
  * @return true se o botão foi ativado, false caso contrário
  */
 bool tocar_sons_botao(Rectangle retangulo, Vector2 posicao_teclado, Vector2 posicao_mouse, int num_botao);
+
+/**
+ * @brief Verifica se houve clique do mouse dentro de um retângulo
+ * @param[in] retangulo_interagivel Área sensível ao clique
+ * @param[in] posicao_mouse Posição atual do cursor do mouse
+ * @return true se o mouse estiver dentro do retângulo e o botão esquerdo foi pressionado
+ */
+bool determina_clique_retangulo(Rectangle retangulo_interagivel, Vector2 posicao_mouse);
 
 /**
  * @brief Processa input e transições da tela de menu principal
@@ -71,14 +86,24 @@ void desenha_menu_nome(Jogo *jogo, Font fonte_textos);
  */
 void atualiza_menu_pausa(Jogo *jogo);
 
+/**
+ * @brief Calcula a posição de desenho de um nome ou tempo na tabela de ranking
+ * @param[in] placar_atual Entrada do ranking que será exibida
+ * @param[in] opcao 'n' para nome ou 't' para tempo
+ * @param[in] indice Índice da linha na tabela
+ * @param[in] fonte_nomes Fonte usada para medir o texto
+ * @param[in] retangulo_calculos Retângulo base usado para o cálculo da posição
+ * @return Vetor com a posição onde o texto deve ser desenhado
+ */
 Vector2 determina_posicao_ranking(TipoPlacar placar_atual, char opcao, int indice, Font fonte_nomes, Rectangle retangulo_calculos);
+
 /**
  * @brief Renderiza os retângulos da tabela de ranking
- * @param retangulo_exterior Retângulo que delimita a área da tabela
+ * @param[in] retangulo_exterior Retângulo que delimita a área da tabela
+ * @param[in] fonte_nomes Fonte usada para os nomes e tempos
+ * @param[in] jogo Estado principal com os dados do ranking
  */
 void desenha_retangulos_menores_ranking(const Rectangle retangulo_exterior, Font fonte_nomes, Jogo* jogo);
-
-bool atualiza_tela_ranking(Rectangle retangulo_interagivel, Vector2  posicao_mouse);
 
 /**
  * @brief Renderiza a tela de ranking com tabela de pontuações

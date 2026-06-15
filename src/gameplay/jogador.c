@@ -2,81 +2,7 @@
 
 #include <string.h>
 
-/**
- * @brief Converte um tile do mapa para a origem em pixels usada pelo jogador
- * @param[in] tile Posição em coordenadas de mapa
- * @return Vetor com a posição equivalente em pixels
- */
-static Vetor2D jogador_tile_para_pixels(PosicaoMapa tile);
-
-/**
- * @brief Informa se um tile conta como plataforma sólida para caminhar
- * @param[in] tile Caractere do tile a ser verificado
- * @return true se o tile sustenta o jogador (Z, S, D ou H)
- * @return false se o tile é vazio ou qualquer outro caractere não sólido
- */
-static bool tile_e_plataforma(char tile);
-
-/**
- * @brief Informa se um tile bloqueia passagem em qualquer direção (apenas Z)
- * @details Escadas são caminháveis por cima mas não bloqueiam movimentos laterais
- *          nem a subida de pulo. Só o tile de chão Z é parede sólida em todos os lados.
- * @param[in] tile Caractere do tile a ser verificado
- * @return true se o tile é uma parede sólida em todos os lados
- * @return false caso contrário
- */
-static bool tile_e_parede(char tile);
-
-/**
- * @brief Informa se uma linha do mapa é uma linha de plataforma
- * @details Uma linha é de plataforma se contém pelo menos um tile Z.
- *          Usado para distinguir H integrado à plataforma (ZZZZHZZZZ) de H no
- *          shaft da escada (linha só com H), que não deve bloquear a queda.
- * @param[in] mapa Mapa consultado
- * @param[in] linha Índice da linha a verificar
- * @return true se a linha contém ao menos um TILE_CHAO
- * @return false se a linha é shaft de escada ou vazia
- */
-static bool linha_e_plataforma(const Mapa* mapa, int linha);
-
-/**
- * @brief Controla entrada e movimento contínuo do jogador na escada
- * @details Entrada: estando em S pressionar cima, em D pressionar baixo, ou em H
- *          qualquer direção vertical (permite entrar na escada ao pular nela).
- *          Movimento: manter vertical desloca o jogador; soltar pausa no meio.
- *          Saída: chegar em D subindo ou S descendo faz snap e libera a física.
- * @param[in,out] jogador Estado do jogador que será lido e modificado
- * @param[in] mapa Mapa consultado para detectar tiles de escada
- * @param[in] comandos Comandos de entrada do frame atual
- * @param[in] delta_tempo Tempo decorrido desde o último frame em segundos
- */
-static void jogador_usar_escada(Jogador* jogador, const Mapa* mapa, ComandosJogador comandos, float delta_tempo);
-
-/**
- * @brief Move o jogador horizontalmente resolvendo colisão por intervalo de pixels
- * @details Projeta a bounding box [x, x+W) para a posição nova e verifica cada tile
- *          que essa faixa toca. Bloqueia o movimento e snapa na borda do tile bloqueante.
- * @param[in,out] jogador Estado do jogador que será lido e modificado
- * @param[in] mapa Mapa consultado para checar colisão horizontal
- * @param[in] comandos Comandos de entrada do frame atual
- * @param[in] delta_tempo Tempo decorrido desde o último frame em segundos
- */
-static void jogador_mover_horizontal(Jogador* jogador, const Mapa* mapa, ComandosJogador comandos, float delta_tempo);
-
-/**
- * @brief Move o jogador verticalmente resolvendo colisão por intervalo de pixels
- * @details Ao cair, varre apenas as linhas estritamente abaixo do corpo atual,
- *          ignorando tiles que o sprite já ocupa. Somente Z e H bloqueiam a queda;
- *          S e D são passáveis verticalmente para evitar o jogador flutuar ao pular
- *          de cima de um tile D ou S. O delta é limitado internamente a 50ms para
- *          evitar tunneling no primeiro frame (GetFrameTime retorna o tempo de init).
- * @param[in,out] jogador Estado do jogador que será lido e modificado
- * @param[in] mapa Mapa consultado para detectar plataformas e teto
- * @param[in] delta_tempo Tempo decorrido desde o último frame em segundos
- */
-static void jogador_mover_vertical(Jogador* jogador, const Mapa* mapa, float delta_tempo);
-
-static Vetor2D jogador_tile_para_pixels(PosicaoMapa tile)
+Vetor2D jogador_tile_para_pixels(PosicaoMapa tile)
 {
     Vetor2D posicao_pixels;
 
@@ -86,21 +12,14 @@ static Vetor2D jogador_tile_para_pixels(PosicaoMapa tile)
     return posicao_pixels;
 }
 
-static bool tile_e_plataforma(char tile)
-{
-    // S e D são entradas/saídas de escada — nunca bloqueiam a física vertical.
-    // Só Z e H (via linha_e_plataforma) são superfícies sólidas.
-    return tile == TILE_CHAO || tile == TILE_ESCADA_PADRAO;
-}
-
-static bool tile_e_parede(char tile)
+bool tile_e_parede(char tile)
 {
     return tile == TILE_CHAO;
 }
 
 // Uma linha é de plataforma se tem pelo menos um Z.
 // Shaft de escada (H sozinho, sem Z na linha) retorna false.
-static bool linha_e_plataforma(const Mapa* mapa, int linha)
+bool linha_e_plataforma(const Mapa* mapa, int linha)
 {
     int c;
 
@@ -198,7 +117,7 @@ bool jogador_esta_sobre_plataforma(const Jogador* jogador, const Mapa* mapa)
 // Entrada na escada: S+cima, D+baixo, ou H em qualquer direção vertical
 // (permite entrar na escada ao pular nela e aterrissar num tile H do shaft).
 // Ao entrar, trava x, zera velocidade e limpa o estado de pulo.
-static void jogador_usar_escada(Jogador* jogador, const Mapa* mapa, ComandosJogador comandos, float delta_tempo)
+void jogador_usar_escada(Jogador* jogador, const Mapa* mapa, ComandosJogador comandos, float delta_tempo)
 {
     char tile_atual;
     float nova_y;
@@ -280,7 +199,7 @@ static void jogador_usar_escada(Jogador* jogador, const Mapa* mapa, ComandosJoga
 // Para mover para a direita, verifica a coluna da borda direita na nova posição.
 // Para mover para a esquerda, verifica a coluna da borda esquerda na nova posição.
 // Varre todas as linhas que o sprite ocupa em Y para não entrar por cima.
-static void jogador_mover_horizontal(Jogador* jogador, const Mapa* mapa, ComandosJogador comandos, float delta_tempo)
+void jogador_mover_horizontal(Jogador* jogador, const Mapa* mapa, ComandosJogador comandos, float delta_tempo)
 {
     float nova_x;
     int linha_topo;
@@ -374,7 +293,7 @@ static void jogador_mover_horizontal(Jogador* jogador, const Mapa* mapa, Comando
 // Ao cair: varre apenas as linhas ABAIXO do corpo atual (não re-verifica tiles que
 // o sprite já ocupa). Só Z (TILE_CHAO) e H (TILE_ESCADA_PADRAO) bloqueiam a queda;
 // S e D são passáveis para que o jogador não flutue ao pular de cima deles.
-static void jogador_mover_vertical(Jogador* jogador, const Mapa* mapa, float delta_tempo)
+void jogador_mover_vertical(Jogador* jogador, const Mapa* mapa, float delta_tempo)
 {
     float dt;
     float nova_y;
@@ -543,7 +462,8 @@ void jogador_atualizar(Jogador* jogador, const Mapa* mapa, ComandosJogador coman
     jogador->tile.coluna  = (int)(jogador->posicao_pixels.x / TILE_SIZE);
 }
 
-bool esta_parado(const ComandosJogador comandos){
-    return(!IsKeyDown(KEY_LEFT) && !IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_A) && !IsKeyDown(KEY_D) && !IsKeyDown(KEY_W) && !IsKeyDown(KEY_S) 
-    && !IsKeyDown(KEY_DOWN) && !IsKeyDown(KEY_UP));
+bool esta_parado(void)
+{
+    return !IsKeyDown(KEY_LEFT) && !IsKeyDown(KEY_RIGHT) && !IsKeyDown(KEY_A) && !IsKeyDown(KEY_D)
+        && !IsKeyDown(KEY_W) && !IsKeyDown(KEY_S) && !IsKeyDown(KEY_DOWN) && !IsKeyDown(KEY_UP);
 }

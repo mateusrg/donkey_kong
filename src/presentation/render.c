@@ -6,35 +6,6 @@
 #include "animacao.h"
 #include "../core/constants.h" 
 #include "audio.h"
-#define LARGURA_IMAGENS_GRANDES 900
-#define ALTURA_IMAGENS_GRANDES 300
-
-/**
- * @brief Desenha todos os power-ups ativos da fase como retângulos amarelos
- * @param[in] jogo Estado principal consultado para a lista de power-ups
- */
-static void desenha_powerups(const Jogo* jogo);
-
-/*
-typedef enum AnimationType{
-    STOPPED = 0,
-    WALKING_RIGHT = 1,
-    WALKING_LEFT = 2,
-    JUMPING = 3,
-} AnimationType;
- 
-
-
-typedef struct Animation {
-    int first;
-    int last;
-    int cur; // current
-    float speed;
-    float duration_left;
-    AnimationType type;
-    int step; // how far you are stepping to the next frame
-} Animation;
- */
 
 static TexturasJogo imagens;
 static Font fonte_jogo;
@@ -148,7 +119,6 @@ void desenha_elementos_HUD(Jogo* jogo){
         float pos_vidas_x;
         float pos_vidas_y;
         float gap;
-        Rectangle coracao;
         Vector2 pos_coracao;
 
         float tamanho_fonte_texto_tempo = TAMANHO_FONTE_TEMPO;
@@ -339,29 +309,9 @@ void desenha_vitoria(const Jogo* jogo, Font fonte)
         TAMANHO_FONTE_DIGITACAO * 0.6f, 2.0f, GRAY);
 }
 
-// Tela de transição entre fases — provisória, o João vai elaborar depois.
-void desenha_proxima_fase(const Jogo* jogo, Font fonte)
-{
-    const char* texto;
-    Vector2 tamanho;
-    float pos_x;
-    float pos_y;
-
-    texto = TextFormat("PASSOU PARA A FASE %d!", jogo->fase_atual);
-    tamanho = MeasureTextEx(fonte, texto, TAMANHO_FONTE_DIGITACAO, 2.0f);
-    pos_x = ((float)JANELA_LARGURA - tamanho.x) / 2.0f;
-    pos_y = ((float)JANELA_ALTURA - tamanho.y) / 2.0f;
-
-    DrawTextEx(fonte, texto, (Vector2){pos_x, pos_y}, TAMANHO_FONTE_DIGITACAO, 2.0f, BLACK);
-
-    DrawTextEx(fonte, "Pressione ENTER ou ESPACO para continuar",
-        (Vector2){pos_x, pos_y + tamanho.y * 1.8f},
-        TAMANHO_FONTE_DIGITACAO * 0.6f, 2.0f, DARKGRAY);
-}
-
 // Power-ups são desenhados com cores distintas por tipo enquanto não há sprite:
 // amarelo = reduz tempo, verde = vida extra, ciano = invencibilidade
-static void desenha_powerups(const Jogo* jogo)
+void desenha_powerups(const Jogo* jogo)
 {
     int i;
     

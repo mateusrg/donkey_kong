@@ -3,8 +3,9 @@
 #include "../core/models.h"
 
 /**
- * @brief redimensiona as imagens estáticas que estão muito grandes
- * @param[in] Recebe o nome do arquivo desejado
+ * @brief Redimensiona as imagens estáticas que estão muito grandes
+ * @param[in] nome_arquivo Nome do arquivo desejado
+ * @return Textura carregada e redimensionada para o tamanho do tile
  */
 Texture2D redimensiona_imagem_estatica(const char* nome_arquivo);
 /**
@@ -19,39 +20,41 @@ void render_inicializar(Jogo* jogo);
 void render_reinicializar_animacoes_inimigos(Jogo* jogo);
 
 /**
- * @brief Desenha o fundo da tela
- * @param[in] Jogo Estado principal consultado para renderização
+ * @brief Desenha as entidades móveis da fase (jogador, inimigos, donkey, princesa)
+ * @param[in] jogo Estado principal consultado para renderização
  */
-
-void desenha_entidades (const Jogo* Jogo);
+void desenha_entidades(const Jogo* jogo);
 
 /**
- * @brief Desenha o fundo da tela
- * @param[in] Jogo Estado principal consultado para renderização
+ * @brief Desenha o mapa estático da fase (chão, escadas, porta)
+ * @param[in] jogo Estado principal consultado para renderização
  */
-void desenha_mapa  (const Jogo* jogo);
+void desenha_mapa(const Jogo* jogo);
 
 /**
- * @brief Desenha o tempo na tela se a tela atual for o jogo
- * @param[in, out] Jogo Estado principal consultado para armazenar o tempo de tela.
+ * @brief Desenha o tempo, vidas e fase atual na HUD
+ * @param[in,out] jogo Estado principal consultado para renderização
  */
-
 void desenha_elementos_HUD(Jogo* jogo);
 
 /**
  * @brief Desenha um frame completo da tela atual a partir do estado do jogo
- * @param[in, out] jogo Estado principal consultado para renderização
+ * @param[in,out] jogo Estado principal consultado para renderização
  */
+void render_desenhar(Jogo* jogo);
 
- void render_desenhar(Jogo* jogo);
 
+/**
+ * @brief Desenha todos os power-ups ativos da fase
+ * @param[in] jogo Estado principal consultado para a lista de power-ups
+ */
+void desenha_powerups(const Jogo* jogo);
 
 /**
  * @brief Desenha o layout do menu de pausa (continuar, voltar para o menu ou sair do jogo)
  * @param[in] opcao_selecionada Índice da opção atualmente destacada no menu
  */
-
- void desenha_menu_pausa(int opcao_selecionada);
+void desenha_menu_pausa(int opcao_selecionada);
 
 
 /**
@@ -68,15 +71,6 @@ void desenha_game_over(const Jogo* jogo, Font fonte);
  */
 
 void desenha_vitoria(const Jogo* jogo, Font fonte);
-
-/**
- * @brief Desenha tela de transição entre fases
- * @details Exibe tela branca com mensagem informando a próxima fase.
- *          O João substituirá esta função por uma versão elaborada depois.
- * @param[in] jogo Estado principal consultado para saber o número da próxima fase
- * @param[in] fonte Fonte usada para desenhar o texto
- */
-void desenha_proxima_fase(const Jogo* jogo, Font fonte);
 
 /**
  * @brief Encerra a renderizacao das texturas

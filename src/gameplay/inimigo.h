@@ -33,3 +33,10 @@ bool inimigo_colide_com_jogador(const Inimigo* inimigo, const Jogador* jogador);
  * @param[in] spawn_inicial Posição de respawn em coordenadas de tile
  */
 void inimigo_resetar(Inimigo* inimigo, PosicaoMapa spawn_inicial);
+
+/**
+ * @brief Converte um tile do mapa para a origem em pixels usada pelo inimigo
+ * @param[in] tile Posição em coordenadas de mapa
+ * @return Vetor com a posição equivalente em pixels
+ */
+Vetor2D inimigo_tile_para_pixels(PosicaoMapa tile);

@@ -2,7 +2,6 @@
 #include <math.h>
 #include "../gameplay/jogador.h"
 #define LARGURA_IMAGENS 900
-#define ALTURA_IMAGENS 300
 
 
 void atualiza_animacao(Animacao *animacaoPersonagem){
@@ -69,7 +68,7 @@ void atualiza_anim_entidades(Jogo *jogo) {
     else{
     
         if(jogo->jogador.esta_em_escada) {
-            if(esta_parado(jogo->jogador.comandos)){
+            if(esta_parado()){
                 jogo->jogador.animacao.first = 5;
                 jogo->jogador.animacao.last = 5;
             }
@@ -86,7 +85,7 @@ void atualiza_anim_entidades(Jogo *jogo) {
         }
         else {
 
-            if(esta_parado(jogo->jogador.comandos)){
+            if(esta_parado()){
                 jogo->jogador.animacao.first = 0;
                 jogo->jogador.animacao.last = 0;
             }

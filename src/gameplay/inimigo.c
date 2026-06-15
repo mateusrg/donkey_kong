@@ -2,14 +2,7 @@
 
 #include <string.h>
 
-/**
- * @brief Converte um tile do mapa para a origem em pixels usada pelo inimigo
- * @param[in] tile Posição em coordenadas de mapa
- * @return Vetor com a posição equivalente em pixels
- */
-static Vetor2D inimigo_tile_para_pixels(PosicaoMapa tile);
-
-static Vetor2D inimigo_tile_para_pixels(PosicaoMapa tile)
+Vetor2D inimigo_tile_para_pixels(PosicaoMapa tile)
 {
     Vetor2D posicao_pixels;
 

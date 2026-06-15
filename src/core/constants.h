@@ -55,9 +55,6 @@
 /** Reducao em segundos aplicada ao tempo ao coletar um power-up */
 #define REDUCAO_TEMPO_POWERUP 5
 
-/** Taxa de quadros alvo da aplicação */
-#define FPS_PADRAO 60
-
 /** Quantidade máxima de inimigos simultâneos na fase */
 #define MAX_INIMIGOS 32
 
@@ -87,10 +84,6 @@
 #define VELOCIDADE_INIMIGO_TILES 3.0f
 #define VELOCIDADE_INIMIGO_PADRAO (VELOCIDADE_INIMIGO_TILES * TILE_SIZE)
 
-/** Aceleração horizontal do jogador em tiles por segundo ao quadrado */
-#define ACELERACAO_HORIZONTAL_TILES 40.0f
-#define ACELERACAO_HORIZONTAL_PADRAO (ACELERACAO_HORIZONTAL_TILES * TILE_SIZE)
-
 /** Gravidade aplicada ao jogador em tiles por segundo ao quadrado */
 #define GRAVIDADE_TILES 60.0f
 #define GRAVIDADE_PADRAO (GRAVIDADE_TILES * TILE_SIZE)
@@ -101,17 +94,8 @@
 /** v0 = sqrt(2 * GRAVIDADE * ALTURA_PULO_TILES * TILE_SIZE) */
 #define FORCA_PULO_PADRAO (sqrtf(2.0f * GRAVIDADE_PADRAO * ALTURA_PULO_TILES * TILE_SIZE))
 
-/** Intervalo base entre passos de animação do inimigo em segundos */
-#define INIMIGO_INTERVALO_PASSO 0.30f
-
-/** Diretório onde ficam os arquivos de mapa */
-#define DIRETORIO_MAPAS "dados/mapas/"
-
 /** Caminho do arquivo binário de placar */
 #define CAMINHO_ARQUIVO_PLACAR "dados/placar/placar.bin"
-
-/** Símbolo de tile vazio no arquivo de mapa */
-#define TILE_VAZIO ' '
 
 /** Símbolo de spawn do jogador no arquivo de mapa */
 #define TILE_JOGADOR 'P'

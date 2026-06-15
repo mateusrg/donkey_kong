@@ -14,10 +14,10 @@ static bool ja_tocou_som_inicial = false;
 static bool primeira_tela_um = true;
 static int indice_nome = 0;
 static char tecla_pressionada = 0;
-;
 static char nomes[10 + 1];
 
 // ===== FUNÇÕES AUXILIARES =====
+
 void atualiza_input_nome(void){
     tecla_pressionada = GetCharPressed();
 }
@@ -103,7 +103,7 @@ bool tocar_sons_botao(Rectangle retangulo, Vector2 posicao_teclado, Vector2 posi
     return false;
 }
                                                                                                                                                                                                             
-void determina_posicoes_inputs(Vector2 *posicoes_teclado, int *indice){
+void determina_posicoes_inputs(int *indice){
     if(IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)){
         switch (*indice){
             case 0: *indice = 1; break;
@@ -140,14 +140,12 @@ void atualiza_menu_principal(Jogo *jogo, Vector2 *posicoes_teclado, Vector2 posi
     }
 
     // Atualizar posição do teclado
-    determina_posicoes_inputs(posicoes_teclado, &indice_teclado_inicial);
+    determina_posicoes_inputs(&indice_teclado_inicial);
 
     // Lógica do botão Jogar
     if(tocar_sons_botao(retangulo_jogar, posicoes_teclado[indice_teclado_inicial], posicao_mouse, 1)){
         jogo->tela_atual = TELA_JOGANDO;
-        jogo->tempos_telas.segundos_ate_jogar = GetTime();
-        printf("Tempo salvo: %d\n", jogo->tempos_telas.segundos_ate_jogar);
-        
+        jogo->tempos_telas.segundos_ate_jogar = GetTime();        
     }
 
     // Lógica do botão Ranking
@@ -312,7 +310,6 @@ void desenha_retangulos_menores_ranking(const Rectangle retangulo_exterior, Font
     
     // Define cabeçalhos (primeira linha)
     Rectangle retangulo_posicao_um = {retangulos_x_in, retangulos_y_in, retangulos_base, retangulos_altura};
-    Rectangle retangulo_posicao_dois = {retangulos_x_in + retangulos_base, retangulos_y_in, retangulos_base, retangulos_altura};
     // Define ultima linha (interagível)
     Rectangle ultimo_retangulo_um = {
         retangulos_x_in, retangulos_y_in + retangulos_altura * (NUM_LINHAS - 1), retangulos_base, retangulos_altura
