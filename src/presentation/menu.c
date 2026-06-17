@@ -9,12 +9,21 @@
 #define QUANTIA_BOTOES 4
 
 // ===== VARIÁVEIS ESTÁTICAS DO MÓDULO =====
-static int indice_teclado_inicial = 0;
+static BotaoMenuPrincipal indice_teclado_inicial = BOTAO_MENU_NENHUM;
 static bool ja_tocou_som_inicial = false;
 static bool primeira_tela_um = true;
 static int indice_nome = 0;
 static char tecla_pressionada = 0;
 static char nomes[10 + 1];
+
+/**
+ * @brief Linhas especiais da tabela de ranking
+ */
+typedef enum LinhaTabelaRanking
+{
+    LINHA_RANKING_CABECALHO = 0, /**< Linha com os títulos "NOME" e "TEMPO" */
+    LINHA_RANKING_PAGINACAO = 6 /**< Linha com botões de navegação entre páginas */
+} LinhaTabelaRanking;
 
 // ===== FUNÇÕES AUXILIARES =====
 
@@ -42,11 +51,11 @@ void DrawTextWithOutline(Font font, const char *text, Vector2 position, float fo
     DrawTextEx(font, text, position, fontSize, spacing, textColor);
 }
 
-bool tocar_sons_botao(Rectangle retangulo, Vector2 posicao_teclado, Vector2 posicao_mouse, int num_botao){
-    static int botao_que_ja_tocou = -1;
-    
+bool tocar_sons_botao(Rectangle retangulo, Vector2 posicao_teclado, Vector2 posicao_mouse, BotaoMenuPrincipal botao){
+    static BotaoMenuPrincipal botao_que_ja_tocou = BOTAO_MENU_NENHUM;
+
     // Detectar clique do mouse ou enter do teclado
-    if(num_botao == 1){
+    if(botao == BOTAO_MENU_JOGAR){
         if (CheckCollisionPointRec(posicao_mouse, retangulo) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
             tocar_audio_efeito("inicio");
             return true;
@@ -56,7 +65,7 @@ bool tocar_sons_botao(Rectangle retangulo, Vector2 posicao_teclado, Vector2 posi
             return true;
         }
     }
-    else if(num_botao == 2){
+    else if(botao == BOTAO_MENU_PLACAR){
         if (CheckCollisionPointRec(posicao_mouse, retangulo) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
             tocar_audio_efeito("ver_placar");
             return true;
@@ -66,7 +75,7 @@ bool tocar_sons_botao(Rectangle retangulo, Vector2 posicao_teclado, Vector2 posi
             return true;
         }
     }
-    else if(num_botao == 3){
+    else if(botao == BOTAO_MENU_SAIR){
         if (CheckCollisionPointRec(posicao_mouse, retangulo) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)){
             tocar_audio_efeito("botao_sair");
             return true;
@@ -88,36 +97,36 @@ bool tocar_sons_botao(Rectangle retangulo, Vector2 posicao_teclado, Vector2 posi
 
     // Toca som ao passar o mouse sobre um botão (controle para não tocar repetidamente)
     if(CheckCollisionPointRec(posicao_mouse, retangulo)){
-        int botao_tocado_atual = num_botao;
+        BotaoMenuPrincipal botao_tocado_atual = botao;
         if(botao_tocado_atual != botao_que_ja_tocou){
             tocar_audio_efeito("troca_opcao");
             botao_que_ja_tocou = botao_tocado_atual;
         }
-    } 
+    }
     else {
-        if (botao_que_ja_tocou == num_botao) {
-            botao_que_ja_tocou = -1;
+        if (botao_que_ja_tocou == botao) {
+            botao_que_ja_tocou = BOTAO_MENU_NENHUM;
         }
     }
 
     return false;
 }
                                                                                                                                                                                                             
-void determina_posicoes_inputs(int *indice){
+void determina_posicoes_inputs(BotaoMenuPrincipal *indice){
     if(IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)){
         switch (*indice){
-            case 0: *indice = 1; break;
-            case 1: *indice = 2; break;
-            case 2: *indice = 3; break;
-            case 3: *indice = 1; break;
+            case BOTAO_MENU_NENHUM: *indice = BOTAO_MENU_JOGAR; break;
+            case BOTAO_MENU_JOGAR: *indice = BOTAO_MENU_PLACAR; break;
+            case BOTAO_MENU_PLACAR: *indice = BOTAO_MENU_SAIR; break;
+            case BOTAO_MENU_SAIR: *indice = BOTAO_MENU_JOGAR; break;
         }
     }
     else if(IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)){
         switch (*indice){
-            case 0: *indice = 1; break;
-            case 1: *indice = 3; break;
-            case 2: *indice = 1; break;
-            case 3: *indice = 2; break;
+            case BOTAO_MENU_NENHUM: *indice = BOTAO_MENU_JOGAR; break;
+            case BOTAO_MENU_JOGAR: *indice = BOTAO_MENU_SAIR; break;
+            case BOTAO_MENU_PLACAR: *indice = BOTAO_MENU_JOGAR; break;
+            case BOTAO_MENU_SAIR: *indice = BOTAO_MENU_PLACAR; break;
         }
     }
 }
@@ -143,18 +152,18 @@ void atualiza_menu_principal(Jogo *jogo, Vector2 *posicoes_teclado, Vector2 posi
     determina_posicoes_inputs(&indice_teclado_inicial);
 
     // Lógica do botão Jogar
-    if(tocar_sons_botao(retangulo_jogar, posicoes_teclado[indice_teclado_inicial], posicao_mouse, 1)){
+    if(tocar_sons_botao(retangulo_jogar, posicoes_teclado[indice_teclado_inicial], posicao_mouse, BOTAO_MENU_JOGAR)){
         jogo->tela_atual = TELA_JOGANDO;
-        jogo->tempos_telas.segundos_ate_jogar = GetTime();        
+        jogo->tempos_telas.segundos_ate_jogar = GetTime();
     }
 
     // Lógica do botão Ranking
-    if(tocar_sons_botao(retangulo_placar, posicoes_teclado[indice_teclado_inicial], posicao_mouse, 2)){
+    if(tocar_sons_botao(retangulo_placar, posicoes_teclado[indice_teclado_inicial], posicao_mouse, BOTAO_MENU_PLACAR)){
         jogo->tela_atual = TELA_RANKING;
     }
 
     // Lógica do botão Sair
-    if(tocar_sons_botao(retangulo_sair, posicoes_teclado[indice_teclado_inicial], posicao_mouse, 3)){
+    if(tocar_sons_botao(retangulo_sair, posicoes_teclado[indice_teclado_inicial], posicao_mouse, BOTAO_MENU_SAIR)){
         jogo->tela_atual = TELA_SAIR;
     }
 }
@@ -268,11 +277,10 @@ void desenha_menu_principal(Jogo *jogo, Font fonte_jogo, Font fonte_botoes, Text
 
 // ===== TELA DE RANKING =====
 
-Vector2 determina_posicao_ranking(TipoPlacar placar_atual, char opcao, int indice, Font fonte_nomes, Rectangle retangulo_calculos){
-    switch (opcao)
+Vector2 determina_posicao_ranking(TipoPlacar placar_atual, CampoRanking campo, int indice, Font fonte_nomes, Rectangle retangulo_calculos){
+    switch (campo)
     {
-    case 'n':
-    case 'N':
+    case CAMPO_RANKING_NOME:
     {
         Vector2 tamanho_texto = MeasureTextEx(fonte_nomes, placar_atual.nome, TAMANHO_FONTE_NOMES_RANKING,  2.0f);
         Vector2 posicao_texto = {
@@ -281,8 +289,7 @@ Vector2 determina_posicao_ranking(TipoPlacar placar_atual, char opcao, int indic
         };
         return posicao_texto;
     }
-    case 't':
-    case 'T':
+    case CAMPO_RANKING_TEMPO:
     {
         Vector2 tamanho_texto_tempo = MeasureTextEx(fonte_nomes, TextFormat("%d",placar_atual.time), TAMANHO_FONTE_NOMES_RANKING,  2.0f);
         Vector2 posicao_texto_dois = {
@@ -360,25 +367,23 @@ void desenha_retangulos_menores_ranking(const Rectangle retangulo_exterior, Font
 
         if(primeira_tela_um == false) {
             if(indice > 0 && indice < 6 && jogo->placar[indice - 1 + MAX_APARECE_RANKING].time != LIMITE_SEGUNDOS){
-                char n = 'n', t = 't'; // Informa para a função se quero extrair o nome do placar ou o tempo do placar 
-                Vector2 posicao_nome = determina_posicao_ranking(jogo->placar[indice - 1 + MAX_APARECE_RANKING], n, indice, fonte_nomes, retangulo_posicao_um);
-                Vector2 posicao_tempo = determina_posicao_ranking(jogo->placar[indice - 1 + MAX_APARECE_RANKING], t, indice, fonte_nomes, retangulo_posicao_um);
+                Vector2 posicao_nome = determina_posicao_ranking(jogo->placar[indice - 1 + MAX_APARECE_RANKING], CAMPO_RANKING_NOME, indice, fonte_nomes, retangulo_posicao_um);
+                Vector2 posicao_tempo = determina_posicao_ranking(jogo->placar[indice - 1 + MAX_APARECE_RANKING], CAMPO_RANKING_TEMPO, indice, fonte_nomes, retangulo_posicao_um);
                 DrawTextEx(fonte_nomes,jogo->placar[indice - 1 + MAX_APARECE_RANKING].nome, posicao_nome, TAMANHO_FONTE_NOMES_RANKING, 2.0f, BLACK);
                 DrawTextEx(fonte_nomes, TextFormat("%d", jogo->placar[indice - 1 + MAX_APARECE_RANKING].time), posicao_tempo, TAMANHO_FONTE_NOMES_RANKING, 2.0f, BLACK);
             }
         }
         else{
             if(indice > 0 && indice < 6 && jogo->placar[indice - 1].time != LIMITE_SEGUNDOS){
-                char n = 'n', t = 't'; // Informa para a função se quero extrair o nome do placar ou o tempo do placar 
-                Vector2 posicao_nome = determina_posicao_ranking(jogo->placar[indice - 1 ], n, indice, fonte_nomes, retangulo_posicao_um);
-                Vector2 posicao_tempo = determina_posicao_ranking(jogo->placar[indice - 1], t, indice, fonte_nomes, retangulo_posicao_um);
+                Vector2 posicao_nome = determina_posicao_ranking(jogo->placar[indice - 1 ], CAMPO_RANKING_NOME, indice, fonte_nomes, retangulo_posicao_um);
+                Vector2 posicao_tempo = determina_posicao_ranking(jogo->placar[indice - 1], CAMPO_RANKING_TEMPO, indice, fonte_nomes, retangulo_posicao_um);
                 DrawTextEx(fonte_nomes,jogo->placar[indice - 1].nome, posicao_nome, TAMANHO_FONTE_NOMES_RANKING, 2.0f, BLACK);
                 DrawTextEx(fonte_nomes, TextFormat("%d", jogo->placar[indice - 1].time), posicao_tempo, TAMANHO_FONTE_NOMES_RANKING, 2.0f, BLACK);
             }
         }
 
-        if(indice == 0){
-        
+        if(indice == LINHA_RANKING_CABECALHO){
+
             DrawRectangleRec(retangulo_abaixo_um, GRAY);
             DrawRectangleLinesEx(retangulo_abaixo_um, 5, BLACK);
             DrawRectangleRec(retangulo_abaixo_dois, GRAY);
@@ -388,7 +393,7 @@ void desenha_retangulos_menores_ranking(const Rectangle retangulo_exterior, Font
             DrawTextEx(fonte_nomes, "TEMPO", posicao_titulo_dois, TAMANHO_FONTE_NOMES_RANKING, 2.0f, BLACK);
         }
 
-        if(indice == 6){
+        if(indice == LINHA_RANKING_PAGINACAO){
             if(CheckCollisionPointRec(pos_mouse, ultimo_retangulo_um)){
                 DrawRectangleRec(retangulo_abaixo_um, LIGHTGRAY);
             }
@@ -553,9 +558,9 @@ void desenha_menu_nome(Jogo *jogo, Font fonte_textos){
 
 void atualiza_menu_pausa(Jogo *jogo)
 {
-    if (jogo->opcao_pausa == -1)
+    if (jogo->opcao_pausa == OPCAO_PAUSA_NENHUMA)
     {
-        jogo->opcao_pausa = 0;
+        jogo->opcao_pausa = OPCAO_PAUSA_CONTINUAR;
         jogo->tempos_telas.segundos_ate_pausar = GetTime();
         return; // primeiro frame de pausa: apenas registra, não processa teclas
     }
@@ -563,18 +568,18 @@ void atualiza_menu_pausa(Jogo *jogo)
     if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W))
     {
         jogo->opcao_pausa--;
-        if (jogo->opcao_pausa < 0)
+        if (jogo->opcao_pausa < OPCAO_PAUSA_CONTINUAR)
         {
-            jogo->opcao_pausa = 2;
+            jogo->opcao_pausa = OPCAO_PAUSA_SAIR;
         }
         tocar_audio_efeito("troca_opcao");
     }
     else if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S))
     {
         jogo->opcao_pausa++;
-        if (jogo->opcao_pausa > 2)
+        if (jogo->opcao_pausa > OPCAO_PAUSA_SAIR)
         {
-            jogo->opcao_pausa = 0;
+            jogo->opcao_pausa = OPCAO_PAUSA_CONTINUAR;
         }
         tocar_audio_efeito("troca_opcao");
     }
@@ -583,25 +588,25 @@ void atualiza_menu_pausa(Jogo *jogo)
     {
         jogo->tempos_telas.segundos_ate_jogar += GetTime() - jogo->tempos_telas.segundos_ate_pausar;
         jogo->tela_atual = TELA_JOGANDO;
-        jogo->opcao_pausa = -1;
+        jogo->opcao_pausa = OPCAO_PAUSA_NENHUMA;
     }
     else if (IsKeyPressed(KEY_ENTER) || IsKeyPressed(KEY_SPACE))
     {
-        if (jogo->opcao_pausa == 0)
+        if (jogo->opcao_pausa == OPCAO_PAUSA_CONTINUAR)
         {
             jogo->tempos_telas.segundos_ate_jogar += GetTime() - jogo->tempos_telas.segundos_ate_pausar;
             jogo->tela_atual = TELA_JOGANDO;
         }
-        else if (jogo->opcao_pausa == 1)
+        else if (jogo->opcao_pausa == OPCAO_PAUSA_MENU)
         {
             jogo_reiniciar_partida(jogo);
             jogo->tela_atual = TELA_MENU_PRINCIPAL;
         }
-        else if (jogo->opcao_pausa == 2)
+        else if (jogo->opcao_pausa == OPCAO_PAUSA_SAIR)
         {
             jogo->tela_atual = TELA_SAIR;
         }
 
-        jogo->opcao_pausa = -1;
+        jogo->opcao_pausa = OPCAO_PAUSA_NENHUMA;
     }
 }

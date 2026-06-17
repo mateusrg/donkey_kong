@@ -29,28 +29,20 @@
 int main(void)
 {
 
-    // 1. Inicialização de dados
-
     Jogo meuJogo = {0};
-    
 
     meuJogo.tela_atual = TELA_MENU_PRINCIPAL;
     meuJogo.fase_atual = 0;
-    meuJogo.opcao_pausa = -1;
+    meuJogo.opcao_pausa = OPCAO_PAUSA_NENHUMA;
 
     for (int i = 0; i < MAX_PLACAR; i++)
     {
-
         meuJogo.placar[i].time = LIMITE_SEGUNDOS;
     }
 
-    // 2. Carrega a fase inicial usando mundo_carregar_fase
-
     if (!mundo_carregar_fase(&meuJogo))
     {
-
         printf("ERRO CRITICO: Nao foi possivel carregar o mapa da fase %d.\n", meuJogo.fase_atual);
-
         return 1;
     }
 
@@ -84,22 +76,16 @@ int main(void)
         }
     }
 
-    // 3. Inicializa a Janela
-
     InitWindow(JANELA_LARGURA, JANELA_ALTURA, "Mario vs Donkey Kong");
     SetExitKey(KEY_NULL); // ESC não fecha a janela
 
     SetTargetFPS(60);
 
-    // 4. Inicializa as texturas
-
     render_inicializar(&meuJogo);
-
-    // 5. Inicializa os audios do jogo
 
     inicializar_audio();
 
-    // Loop de teste
+    // Loop  principal
 
     while (!WindowShouldClose() && meuJogo.tela_atual != TELA_SAIR)
     {
@@ -115,15 +101,15 @@ int main(void)
 
             atualizar_audio_musica();
 
-            if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) comandos.horizontal = 1;
-            else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) comandos.horizontal = -1;
+            if (IsKeyDown(KEY_RIGHT) || IsKeyDown(KEY_D)) comandos.horizontal = DIRECAO_DIREITA;
+            else if (IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_A)) comandos.horizontal = DIRECAO_ESQUERDA;
             if(jogador_esta_sobre_plataforma(&meuJogo.jogador, &meuJogo.mapa) && (IsKeyDown(KEY_RIGHT)
             || IsKeyDown(KEY_LEFT) || IsKeyDown(KEY_D) || IsKeyDown(KEY_A))){
                 tocar_audio_efeito("passos");
             }
         
-            if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) comandos.vertical = -1;
-            else if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) comandos.vertical = 1;
+            if (IsKeyDown(KEY_UP) || IsKeyDown(KEY_W)) comandos.vertical = DIRECAO_CIMA;
+            else if (IsKeyDown(KEY_DOWN) || IsKeyDown(KEY_S)) comandos.vertical = DIRECAO_BAIXO;
 
             if (IsKeyPressed(KEY_SPACE) && jogador_esta_sobre_plataforma(&meuJogo.jogador, &meuJogo.mapa)){ comandos.acao_pulo = true; tocar_audio_efeito("pulo");}
 
@@ -223,13 +209,9 @@ int main(void)
 
 
         // --- DESENHO ---
-
-        // Desenha os elementos gerais do jogo (Tela principal, animações dos personagens, tela de pausa, etc)
-
+        
         render_desenhar(&meuJogo);
     }
-
-    // 5. Finalização
 
     WaitTime(0.8f);
 

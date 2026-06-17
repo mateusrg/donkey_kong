@@ -151,13 +151,35 @@ typedef enum TelaAtual
 } TelaAtual;
 
 /**
+ * @brief Opções disponíveis no menu de pausa
+ */
+typedef enum OpcaoPausa
+{
+    OPCAO_PAUSA_NENHUMA = -1, /**< Estado antes de qualquer seleção no menu de pausa */
+    OPCAO_PAUSA_CONTINUAR = 0, /**< Retorna à partida */
+    OPCAO_PAUSA_MENU = 1, /**< Volta ao menu principal */
+    OPCAO_PAUSA_SAIR = 2 /**< Encerra o jogo */
+} OpcaoPausa;
+
+/**
  * @brief Representa a direção horizontal de movimento de uma entidade
  */
 typedef enum DirecaoHorizontal
 {
-    DIRECAO_ESQUERDA = -1, /**< Movimento horizontal para a esquerda */ 
+    DIRECAO_ESQUERDA = -1, /**< Movimento horizontal para a esquerda */
+    DIRECAO_NENHUMA = 0, /**< Sem movimento horizontal */
     DIRECAO_DIREITA = 1 /**< Movimento horizontal para a direita */
 } DirecaoHorizontal;
+
+/**
+ * @brief Representa a direção vertical de movimento de uma entidade
+ */
+typedef enum DirecaoVertical
+{
+    DIRECAO_CIMA = -1, /**< Movimento vertical para cima */
+    DIRECAO_VERTICAL_NENHUMA = 0, /**< Sem movimento vertical */
+    DIRECAO_BAIXO = 1 /**< Movimento vertical para baixo */
+} DirecaoVertical;
 
 /**
  * @brief Representa o estado atual de determinado personagem

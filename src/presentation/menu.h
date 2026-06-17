@@ -4,6 +4,27 @@
 #include "audio.h"
 #include "raylib.h"
 #include "animacao.h"
+
+/**
+ * @brief Botões disponíveis no menu principal
+ */
+typedef enum BotaoMenuPrincipal
+{
+    BOTAO_MENU_NENHUM = 0, /**< Nenhum botão selecionado */
+    BOTAO_MENU_JOGAR = 1, /**< Botão "Jogar" */
+    BOTAO_MENU_PLACAR = 2, /**< Botão "Placar" */
+    BOTAO_MENU_SAIR = 3 /**< Botão "Sair" */
+} BotaoMenuPrincipal;
+
+/**
+ * @brief Campo do ranking a ser extraído para exibição
+ */
+typedef enum CampoRanking
+{
+    CAMPO_RANKING_NOME = 'n', /**< Nome do jogador */
+    CAMPO_RANKING_TEMPO = 't' /**< Tempo registrado */
+} CampoRanking;
+
 /**
  * @brief Desenha texto com contorno (outline) para melhor legibilidade
  * @param font Fonte a ser utilizada
@@ -19,9 +40,9 @@ void DrawTextWithOutline(Font font, const char *text, Vector2 position, float fo
 
 /**
  * @brief Atualiza a posição do cursor do teclado com base em inputs de setas
- * @param indice Índice atual do cursor
+ * @param indice Botão atualmente selecionado pelo cursor
  */
-void determina_posicoes_inputs(int *indice);
+void determina_posicoes_inputs(BotaoMenuPrincipal *indice);
 
 /**
  * @brief Lê o próximo caractere pressionado pelo jogador para digitação do nome
@@ -38,10 +59,10 @@ void toca_audio_digitando(void);
  * @param retangulo Área do botão
  * @param posicao_teclado Posição do cursor do teclado
  * @param posicao_mouse Posição do mouse
- * @param num_botao Número do botão (1=Jogar, 2=Placar, 3=Sair)
+ * @param botao Botão sendo verificado
  * @return true se o botão foi ativado, false caso contrário
  */
-bool tocar_sons_botao(Rectangle retangulo, Vector2 posicao_teclado, Vector2 posicao_mouse, int num_botao);
+bool tocar_sons_botao(Rectangle retangulo, Vector2 posicao_teclado, Vector2 posicao_mouse, BotaoMenuPrincipal botao);
 
 /**
  * @brief Verifica se houve clique do mouse dentro de um retângulo
@@ -89,13 +110,13 @@ void atualiza_menu_pausa(Jogo *jogo);
 /**
  * @brief Calcula a posição de desenho de um nome ou tempo na tabela de ranking
  * @param[in] placar_atual Entrada do ranking que será exibida
- * @param[in] opcao 'n' para nome ou 't' para tempo
+ * @param[in] campo Campo do ranking a ser exibido (nome ou tempo)
  * @param[in] indice Índice da linha na tabela
  * @param[in] fonte_nomes Fonte usada para medir o texto
  * @param[in] retangulo_calculos Retângulo base usado para o cálculo da posição
  * @return Vetor com a posição onde o texto deve ser desenhado
  */
-Vector2 determina_posicao_ranking(TipoPlacar placar_atual, char opcao, int indice, Font fonte_nomes, Rectangle retangulo_calculos);
+Vector2 determina_posicao_ranking(TipoPlacar placar_atual, CampoRanking campo, int indice, Font fonte_nomes, Rectangle retangulo_calculos);
 
 /**
  * @brief Renderiza os retângulos da tabela de ranking

@@ -15,11 +15,11 @@ typedef struct Vetor2D
 typedef struct Animacao {
     int first;
     int last;
-    int cur; // current
+    int cur;
     float speed;
     float duration_left;
     AnimationType type;
-    int step; // how far you are stepping to the next frame
+    int step;
 } Animacao;
 
 /**
@@ -36,8 +36,8 @@ typedef struct PosicaoMapa
  */
 typedef struct ComandosJogador
 {
-    int horizontal; /**< Direção horizontal desejada pelo jogador */
-    int vertical; /**< Direção vertical desejada pelo jogador */
+    DirecaoHorizontal horizontal; /**< Direção horizontal desejada pelo jogador */
+    DirecaoVertical vertical; /**< Direção vertical desejada pelo jogador */
     bool acao_pulo; /**< Estado da ação principal no frame atual */
 } ComandosJogador;
 
@@ -173,7 +173,7 @@ typedef struct Jogo
     PowerUp powerups[MAX_POWERUPS]; /**< Power-ups ativos na fase atual */
     int quantidade_powerups; /**< Quantidade válida de power-ups no vetor */
     int bonus_tempo_segundos; /**< Segundos acumulados de redução de tempo por power-ups */
-    int opcao_pausa; /**< Opção selecionada no menu de pausa */
+    OpcaoPausa opcao_pausa; /**< Opção selecionada no menu de pausa */
 } Jogo;
 
 /**

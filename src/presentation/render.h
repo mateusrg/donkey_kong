@@ -52,9 +52,9 @@ void desenha_powerups(const Jogo* jogo);
 
 /**
  * @brief Desenha o layout do menu de pausa (continuar, voltar para o menu ou sair do jogo)
- * @param[in] opcao_selecionada Índice da opção atualmente destacada no menu
+ * @param[in] opcao_selecionada Opção atualmente destacada no menu
  */
-void desenha_menu_pausa(int opcao_selecionada);
+void desenha_menu_pausa(OpcaoPausa opcao_selecionada);
 
 
 /**

@@ -131,11 +131,11 @@ void jogador_usar_escada(Jogador* jogador, const Mapa* mapa, ComandosJogador com
     {
         entra = false;
 
-        if ((tile_atual == TILE_ESCADA_SUBIDA || tile_atual == TILE_ESCADA_PADRAO) && comandos.vertical == -1)
+        if ((tile_atual == TILE_ESCADA_SUBIDA || tile_atual == TILE_ESCADA_PADRAO) && comandos.vertical == DIRECAO_CIMA)
         {
             entra = true;
         }
-        else if ((tile_atual == TILE_ESCADA_DESCIDA || tile_atual == TILE_ESCADA_PADRAO) && comandos.vertical == 1)
+        else if ((tile_atual == TILE_ESCADA_DESCIDA || tile_atual == TILE_ESCADA_PADRAO) && comandos.vertical == DIRECAO_BAIXO)
         {
             entra = true;
         }
@@ -151,7 +151,7 @@ void jogador_usar_escada(Jogador* jogador, const Mapa* mapa, ComandosJogador com
         jogador->esta_pulando = false;
     }
 
-    if (comandos.vertical == 0)
+    if (comandos.vertical == DIRECAO_VERTICAL_NENHUMA)
     {
         return;
     }
@@ -172,7 +172,7 @@ void jogador_usar_escada(Jogador* jogador, const Mapa* mapa, ComandosJogador com
 
     tile_destino = mapa->tiles[nova_linha][jogador->tile.coluna];
 
-    if (tile_destino == TILE_ESCADA_DESCIDA && comandos.vertical == -1)
+    if (tile_destino == TILE_ESCADA_DESCIDA && comandos.vertical == DIRECAO_CIMA)
     {
         jogador->posicao_pixels.y = (float)(nova_linha * TILE_SIZE);
         jogador->tile.linha = nova_linha;
@@ -181,7 +181,7 @@ void jogador_usar_escada(Jogador* jogador, const Mapa* mapa, ComandosJogador com
         return;
     }
 
-    if (tile_destino == TILE_ESCADA_SUBIDA && comandos.vertical == 1)
+    if (tile_destino == TILE_ESCADA_SUBIDA && comandos.vertical == DIRECAO_BAIXO)
     {
         jogador->posicao_pixels.y = (float)(nova_linha * TILE_SIZE);
         jogador->tile.linha = nova_linha;
@@ -228,7 +228,7 @@ void jogador_mover_horizontal(Jogador* jogador, const Mapa* mapa, ComandosJogado
     linha_topo = (int)(jogador->posicao_pixels.y / TILE_SIZE);
     linha_base = (int)((jogador->posicao_pixels.y + (float)TILE_SIZE - 1.0f) / TILE_SIZE);
 
-    if (comandos.horizontal > 0)
+    if (comandos.horizontal == DIRECAO_DIREITA)
     {
         // Borda direita do sprite na nova posição
         col_borda = (int)((nova_x + (float)TILE_SIZE - 1.0f) / TILE_SIZE);
@@ -257,7 +257,7 @@ void jogador_mover_horizontal(Jogador* jogador, const Mapa* mapa, ComandosJogado
     if (bloqueado)
     {
         // Snap na borda do tile bloqueante para não deixar gap nem overlap
-        if (comandos.horizontal > 0)
+        if (comandos.horizontal == DIRECAO_DIREITA)
         {
             jogador->posicao_pixels.x = (float)(col_borda * TILE_SIZE) - (float)TILE_SIZE;
         }
@@ -271,15 +271,15 @@ void jogador_mover_horizontal(Jogador* jogador, const Mapa* mapa, ComandosJogado
     jogador->posicao_pixels.x = nova_x;
     jogador->tile.coluna = (int)(nova_x / TILE_SIZE);
 
-    if (comandos.horizontal == 0) {
+    if (comandos.horizontal == DIRECAO_NENHUMA) {
         // Não tem direção padrao -> Salva a ultima realizada
         return;
     }
-    if (comandos.horizontal == 1)
+    if (comandos.horizontal == DIRECAO_DIREITA)
     {
         jogador->direcao_horizontal = DIRECAO_DIREITA;
     }
-    else if (comandos.horizontal == -1)
+    else if (comandos.horizontal == DIRECAO_ESQUERDA)
     {
         jogador->direcao_horizontal = DIRECAO_ESQUERDA;
     }

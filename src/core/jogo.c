@@ -1,5 +1,6 @@
 #include "jogo.h"
 
+#include <stdio.h>
 #include <string.h>
 
 #include "../gameplay/mundo.h"
@@ -10,6 +11,7 @@ void jogo_reiniciar_partida(Jogo* jogo)
 {
     if (!jogo)
     {
+        printf("Struct jogo passada é nula.");
         return;
     }
 
@@ -20,7 +22,7 @@ void jogo_reiniciar_partida(Jogo* jogo)
     jogo->tempos_telas.segundos_ate_jogar = 0.0f;
     jogo->tempos_telas.segundos_ate_fim_partida = 0.0f;
     jogo->tempos_telas.segundos_ate_pausar = 0.0f;
-    jogo->opcao_pausa = -1;
+    jogo->opcao_pausa = OPCAO_PAUSA_NENHUMA;
     jogo->ranking_atualizado = false;
 
     mundo_carregar_fase(jogo);
