@@ -7,10 +7,8 @@
 #include "../io/mapa_io.h"
 #include "constants.h"
 
-void jogo_reiniciar_partida(Jogo* jogo)
-{
-    if (!jogo)
-    {
+void jogo_reiniciar_partida(Jogo* jogo) {
+    if (!jogo) {
         printf("Struct jogo passada é nula.");
         return;
     }

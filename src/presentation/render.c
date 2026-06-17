@@ -376,7 +376,6 @@ void desenha_menu_pausa(OpcaoPausa opcao_selecionada)
     }
 }
 
-// Função que dita qual tela será desenhada no momento
 void render_desenhar(Jogo *jogo)
 {
     BeginDrawing();
@@ -424,6 +423,7 @@ void render_desenhar(Jogo *jogo)
     }
     EndDrawing();
 }
+
 // Descarrega as texturas e as fontes
 void render_encerrar(void)
 {

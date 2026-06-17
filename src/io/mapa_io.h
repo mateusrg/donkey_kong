@@ -16,7 +16,7 @@ bool mapa_montar_caminho_fase(int fase_atual, char* caminho_saida);
  * @brief Lê o mapa de disco e preenche layout, spawn e inimigos iniciais
  * @param[in] caminho_arquivo Caminho do arquivo de mapa que será aberto
  * @param[out] mapa Estrutura de mapa que receberá os tiles carregados
- * @param[out]  jogador Estrutura que receberá onde o jogador ficará posicionado no mapa
+ * @param[out] jogador Estrutura que receberá onde o jogador ficará posicionado no mapa
  * @param[out] inimigos Vetor que receberá os inimigos encontrados no arquivo
  * @param[out] quantidade_inimigos Quantidade de inimigos preenchidos no vetor
  * @return true se o mapa foi lido e interpretado com sucesso

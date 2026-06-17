@@ -243,7 +243,7 @@ void desenha_menu_principal(Jogo *jogo, Font fonte_jogo, Font fonte_botoes, Text
     DrawRectangleRoundedLines(retangulo_placar, 0.2, 4, BLACK);
     DrawRectangleRoundedLines(retangulo_sair, 0.2, 4, BLACK);
 
-    // ===== DESENHAR TEXTOS NOS BOTÕES =====
+    // Desenhas textos nos botões
     float tamanho_fonte_botao = TAMANHO_FONTE_BOTAO_MENU;
 
     // Texto Jogar
@@ -270,12 +270,12 @@ void desenha_menu_principal(Jogo *jogo, Font fonte_jogo, Font fonte_botoes, Text
     };
     DrawTextWithOutline(fonte_botoes, "SAIR", pos_texto_sair, tamanho_fonte_botao, 2.0f, WHITE, BLACK, 2.0f);
 
-    // ===== DESENHAR TÍTULO COM EFEITOS =====
+    // Desenhar título com efeitos
     DrawTextEx(fonte_jogo, "Mario vs. Donkey Kong", posicao_sombra, tamanho_fonte_titulo, 2.0f, BLACK);
     DrawTextWithOutline(fonte_jogo, "Mario vs. Donkey Kong", posicao_texto, tamanho_fonte_titulo, 2.0f, RED, BLACK, 5.0f);
 }
 
-// ===== TELA DE RANKING =====
+// Tela de ranking
 
 Vector2 determina_posicao_ranking(TipoPlacar placar_atual, CampoRanking campo, int indice, Font fonte_nomes, Rectangle retangulo_calculos){
     switch (campo)
@@ -428,7 +428,7 @@ void desenha_tela_ranking(Jogo *jogo, Font fonte_nomes, Font fonte_jogo){
     float x_centro = JANELA_LARGURA / 2.0f;
     float y_centro = JANELA_ALTURA / 2.0f;
 
-    // ===== TÍTULO DO RANKING =====
+    // Título do ranking
     float tamanho_fonte_titulo = TAMANHO_FONTE_TITULO_RANKING;
     Vector2 tamanho_titulo = MeasureTextEx(fonte_jogo, "RANKING", tamanho_fonte_titulo, 2.0f);
     float x_centro_texto = x_centro - (tamanho_titulo.x / 2.0f);
@@ -437,7 +437,7 @@ void desenha_tela_ranking(Jogo *jogo, Font fonte_nomes, Font fonte_jogo){
 
     DrawTextWithOutline(fonte_jogo, "RANKING", pos_titulo_ranking, tamanho_fonte_titulo, 2.0f, BLACK, WHITE, 2.0f);
 
-    // ===== TABELA DE RANKING =====
+    // Tabela de ranking
     float retangulo_ranking_base = JANELA_LARGURA * 0.8f;
     float retangulo_ranking_altura = JANELA_ALTURA * 0.7f;
     float retangulo_ranking_pos_x = x_centro - (retangulo_ranking_base / 2);
@@ -463,7 +463,7 @@ void desenha_tela_ranking(Jogo *jogo, Font fonte_nomes, Font fonte_jogo){
     // Desenhar os retângulos menores da tabela
     desenha_retangulos_menores_ranking(retangulo_ranking_menor, fonte_nomes, jogo);
 
-    // ===== BOTÃO DE VOLTAR =====
+    // Botão de voltar
     float tamanho_fonte_x = TAMANHO_FONTE_BOTAO_UI;
     Vector2 tamanho_x = MeasureTextEx(fonte_nomes, "<", tamanho_fonte_x, 2.0f);
     
@@ -493,12 +493,12 @@ void desenha_tela_ranking(Jogo *jogo, Font fonte_nomes, Font fonte_jogo){
     }
 }
 
-// ===== DIGITAÇÃO DE NOME =====
+// Digitação de nome
 
 void desenha_menu_nome(Jogo *jogo, Font fonte_textos){
     float tamanho_fonte = TAMANHO_FONTE_DIGITACAO;
 
-    // ===== CAPTURAR ENTRADAS DO TECLADO =====
+    // Capturar entradas do teclado
     while(tecla_pressionada > 0) {
         if(indice_nome < TAM_MAX_NOME){
             nomes[indice_nome] = tecla_pressionada;
@@ -514,8 +514,8 @@ void desenha_menu_nome(Jogo *jogo, Font fonte_textos){
         nomes[indice_nome] = '\0';
     }
 
-    // ===== DESENHAR RETÂNGULO DE ENTRADA =====
-    // Usa o label como referência para manter o retângulo proporcional ao TILE_SIZE.
+    // Desenhar retângulo de entrada
+    // Usa o label como referência para manter o retângulo proporcional ao TILE_SIZE
     Vector2 tamanho_label = MeasureTextEx(fonte_textos, "DIGITE O SEU NOME", tamanho_fonte, 2.0f);
     float retangulo_nome_base = tamanho_label.x * 1.2f;
     float retangulo_nome_altura = tamanho_label.y * 2.0f;
@@ -527,7 +527,7 @@ void desenha_menu_nome(Jogo *jogo, Font fonte_textos){
     DrawRectangleRec(retangulo_nome, RAYWHITE);
     DrawRectangleLinesEx(retangulo_nome, 2.0, GRAY);
 
-    // ===== DESENHAR TEXTO DIGITADO =====
+    // Desenhar texto digitado
     Vector2 tamanho_titulo_nome = MeasureTextEx(fonte_textos, nomes, tamanho_fonte, 2.0f);
     float pos_escrita_nome_x = retangulo_nome.x + (retangulo_nome_base - tamanho_titulo_nome.x) / 2.0f;
     float pos_escrita_nome_y = retangulo_nome.y + (retangulo_nome_altura - tamanho_titulo_nome.y) / 2.0f;
@@ -535,14 +535,14 @@ void desenha_menu_nome(Jogo *jogo, Font fonte_textos){
 
     DrawTextEx(fonte_textos, nomes, pos_escrita_nome, tamanho_fonte, 4.0f, BLACK);
 
-    // ===== DESENHAR LABEL =====
+    // Desenhar label
     float pos_label_x = JANELA_LARGURA / 2.0f - tamanho_label.x / 2.0f;
     float pos_label_y = (JANELA_ALTURA / 2.0f) - retangulo_nome_altura;
     Vector2 pos_label = {pos_label_x, pos_label_y};
 
     DrawTextWithOutline(fonte_textos, "DIGITE O SEU NOME", pos_label, tamanho_fonte, 2.0f, RED, GRAY, 1.0f);
 
-    // ===== LÓGICA DE CONFIRMAÇÃO =====
+    // Lógica de confirmação
     if(IsKeyPressed(KEY_ENTER) && jogo->tela_atual == TELA_DIGITANDO_NOME && !jogo->enter_processado_neste_frame){
         placar_inserir(jogo->placar, MAX_PLACAR, nomes, jogo->tempos_telas.segundos_ate_fim_partida);
         placar_salvar(CAMINHO_ARQUIVO_PLACAR, jogo->placar, MAX_PLACAR);
@@ -562,7 +562,7 @@ void atualiza_menu_pausa(Jogo *jogo)
     {
         jogo->opcao_pausa = OPCAO_PAUSA_CONTINUAR;
         jogo->tempos_telas.segundos_ate_pausar = GetTime();
-        return; // primeiro frame de pausa: apenas registra, não processa teclas
+        return; // primeiro frame de pausa apenas registra, não processa teclas
     }
 
     if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W))

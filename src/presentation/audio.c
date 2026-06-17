@@ -20,8 +20,7 @@ static Sound som_troca_opcao;
 static Sound som_nome;
 
 void inicializar_audio(void) {
-    InitAudioDevice(); // Inicia o áudio
-
+        InitAudioDevice(); // Inicia o áudio
     // Carrega a musica de fundo
     musica_fundo = LoadMusicStream("assets/audios/musica_fundo.mp3");
     musica_fundo.looping = true; // Garante que ela entre em loop quando acabe
@@ -42,8 +41,7 @@ void inicializar_audio(void) {
     som_pausa = LoadSound("assets/audios/pause.wav");
     som_troca_opcao = LoadSound("assets/audios/troca_opcao.wav");
     som_nome = LoadSound("assets/audios/nome_som.wav");
-    
-    // Configurando o volume dos sons
+
     SetSoundVolume(som_pulo, 0.5f);
     SetSoundVolume(som_morte, 0.7f);
     SetSoundVolume(som_inicio, 1.0f);
@@ -68,52 +66,37 @@ void atualizar_audio_musica(void) {
 void tocar_audio_efeito(const char* nome_efeito) {
     if (strcmp(nome_efeito, "pulo") == 0) {
         PlaySound(som_pulo);
-    } 
-    else if (strcmp(nome_efeito, "morte") == 0) {
+    } else if (strcmp(nome_efeito, "morte") == 0) {
         PlaySound(som_morte);
-    } 
-    else if (strcmp(nome_efeito, "inicio") == 0) {
+    } else if (strcmp(nome_efeito, "inicio") == 0) {
         PlaySound(som_inicio);
-    }
-    else if (strcmp(nome_efeito, "porta") == 0) {
+    } else if (strcmp(nome_efeito, "porta") == 0) {
         PlaySound(som_porta);
-    } 
-    else if (strcmp(nome_efeito, "abre_jogo") == 0) {
+    } else if (strcmp(nome_efeito, "abre_jogo") == 0) {
         PlaySound(som_abre_jogo);
-    } 
-    else if (strcmp(nome_efeito, "fase_final") == 0) {
+    } else if (strcmp(nome_efeito, "fase_final") == 0) {
         PlaySound(som_fase_final);
-    } 
-    else if (strcmp(nome_efeito, "botao_sair") == 0) {
+    } else if (strcmp(nome_efeito, "botao_sair") == 0) {
         PlaySound(som_botao_sair);
-    } 
-    else if (strcmp(nome_efeito, "upgrade") == 0) {
+    } else if (strcmp(nome_efeito, "upgrade") == 0) {
         PlaySound(som_upgrade);
-    } 
-    else if (strcmp(nome_efeito, "ver_placar") == 0) {
+    } else if (strcmp(nome_efeito, "ver_placar") == 0) {
         PlaySound(som_ver_placar);
-    } 
-    else if (strcmp(nome_efeito, "pausa") == 0) {
+    } else if (strcmp(nome_efeito, "pausa") == 0) {
         PlaySound(som_pausa);
-    } 
-    else if (strcmp(nome_efeito, "passos") == 0) {
+    } else if (strcmp(nome_efeito, "passos") == 0) {
         if (!IsSoundPlaying(som_passos)) {
             PlaySound(som_passos);
         }
-    }
-     else if (strcmp(nome_efeito, "troca_opcao") == 0) {
-         PlaySound(som_troca_opcao);
-        
-    }
-    else if (strcmp(nome_efeito, "nome") == 0) {
+    } else if (strcmp(nome_efeito, "troca_opcao") == 0) {
+        PlaySound(som_troca_opcao);
+    } else if (strcmp(nome_efeito, "nome") == 0) {
         PlaySound(som_nome);
-    
     }
 }
 
 void encerrar_audio(void) {
-    // Descarrega tudo da RAM
-   // UnloadMusicStream(musica_fundo);
+    // musica_fundo não é descarregada aqui para evitar crash no encerramento do raylib
     UnloadSound(som_pulo);
     UnloadSound(som_morte);
     UnloadSound(som_inicio);

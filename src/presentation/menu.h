@@ -8,8 +8,7 @@
 /**
  * @brief Botões disponíveis no menu principal
  */
-typedef enum BotaoMenuPrincipal
-{
+typedef enum BotaoMenuPrincipal {
     BOTAO_MENU_NENHUM = 0, /**< Nenhum botão selecionado */
     BOTAO_MENU_JOGAR = 1, /**< Botão "Jogar" */
     BOTAO_MENU_PLACAR = 2, /**< Botão "Placar" */
@@ -19,14 +18,13 @@ typedef enum BotaoMenuPrincipal
 /**
  * @brief Campo do ranking a ser extraído para exibição
  */
-typedef enum CampoRanking
-{
+typedef enum CampoRanking {
     CAMPO_RANKING_NOME = 'n', /**< Nome do jogador */
     CAMPO_RANKING_TEMPO = 't' /**< Tempo registrado */
 } CampoRanking;
 
 /**
- * @brief Desenha texto com contorno (outline) para melhor legibilidade
+ * @brief Desenha texto com contorno para melhor legibilidade
  * @param font Fonte a ser utilizada
  * @param text Texto a ser desenhado
  * @param position Posição do texto na tela
@@ -133,5 +131,3 @@ void desenha_retangulos_menores_ranking(const Rectangle retangulo_exterior, Font
  * @param fonte_textos Fonte para os textos da tabela
  */
 void desenha_tela_ranking(Jogo *jogo, Font fonte_jogo, Font fonte_textos);
-
-

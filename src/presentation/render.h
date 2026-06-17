@@ -8,8 +8,9 @@
  * @return Textura carregada e redimensionada para o tamanho do tile
  */
 Texture2D redimensiona_imagem_estatica(const char* nome_arquivo);
+
 /**
- * @brief Inicializa a renderizacao das texturas
+ * @brief Inicializa a renderização das texturas
  */
 void render_inicializar(Jogo* jogo);
 
@@ -43,7 +44,6 @@ void desenha_elementos_HUD(Jogo* jogo);
  */
 void render_desenhar(Jogo* jogo);
 
-
 /**
  * @brief Desenha todos os power-ups ativos da fase
  * @param[in] jogo Estado principal consultado para a lista de power-ups
@@ -56,7 +56,6 @@ void desenha_powerups(const Jogo* jogo);
  */
 void desenha_menu_pausa(OpcaoPausa opcao_selecionada);
 
-
 /**
  * @brief Desenha tela de game over
  * @param[in] jogo Estado principal consultado
@@ -65,14 +64,13 @@ void desenha_menu_pausa(OpcaoPausa opcao_selecionada);
 void desenha_game_over(const Jogo* jogo, Font fonte);
 
 /**
- * @brief Desenha tela de vitoria
+ * @brief Desenha tela de vitória
  * @param[in] jogo Estado principal consultado
  * @param[in] fonte Fonte usada para desenhar o texto
  */
-
 void desenha_vitoria(const Jogo* jogo, Font fonte);
 
 /**
- * @brief Encerra a renderizacao das texturas
+ * @brief Encerra a renderização das texturas
  */
 void render_encerrar(void);

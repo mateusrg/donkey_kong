@@ -6,8 +6,7 @@
 /**
  * @brief Vetor bidimensional usado para posições, velocidades e acelerações
  */
-typedef struct Vetor2D
-{
+typedef struct Vetor2D {
     float x; /**< Componente horizontal do vetor */
     float y; /**< Componente vertical do vetor */
 } Vetor2D;
@@ -25,8 +24,7 @@ typedef struct Animacao {
 /**
  * @brief Posição discreta do mapa baseada em linha e coluna
  */
-typedef struct PosicaoMapa
-{
+typedef struct PosicaoMapa {
     int linha; /**< Índice da linha no grid do mapa */
     int coluna; /**< Índice da coluna no grid do mapa */
 } PosicaoMapa;
@@ -34,19 +32,16 @@ typedef struct PosicaoMapa
 /**
  * @brief Entrada de comandos do jogador lida em um frame
  */
-typedef struct ComandosJogador
-{
+typedef struct ComandosJogador {
     DirecaoHorizontal horizontal; /**< Direção horizontal desejada pelo jogador */
     DirecaoVertical vertical; /**< Direção vertical desejada pelo jogador */
     bool acao_pulo; /**< Estado da ação principal no frame atual */
 } ComandosJogador;
 
-
 /**
  * @brief Estado completo do jogador durante a partida
  */
-typedef struct Jogador
-{
+typedef struct Jogador {
     PosicaoMapa tile; /**< Tile atual ocupado pelo jogador */
     PosicaoMapa spawn_inicial; /**< Tile usado para spawn e respawn */
     Vetor2D posicao_pixels; /**< Posição contínua do jogador em pixels */
@@ -68,8 +63,7 @@ typedef struct Jogador
 /**
  * @brief Estado completo de um inimigo da fase
  */
-typedef struct Inimigo
-{
+typedef struct Inimigo {
     PosicaoMapa tile; /**< Tile atual ocupado pelo inimigo */
     PosicaoMapa spawn_inicial; /**< Tile usado para o spawn inicial do inimigo */
     Vetor2D posicao_pixels; /**< Posição contínua do inimigo em pixels */
@@ -84,8 +78,7 @@ typedef struct Inimigo
 /**
  * @brief Estado completo do donkey na fase
  */
-typedef struct Donkey
-{
+typedef struct Donkey {
     PosicaoMapa tile;
     PosicaoMapa spawn_inicial;
     Vetor2D posicao_pixels;
@@ -99,21 +92,19 @@ typedef struct Donkey
 /**
  * @brief Estado completo da princesa na fase
  */
-
- typedef struct Princesa
- {
+typedef struct Princesa {
     PosicaoMapa tile;
     PosicaoMapa spawn_inicial;
     Vetor2D posicao_pixels;
     Animacao animacao;
     DirecaoHorizontal direcao_horizontal;
     bool ativo; // fim, pois a princesa não se moverá
- } Princesa;
+} Princesa;
+
 /**
  * @brief Power-up coletável espalhado na fase
  */
-typedef struct PowerUp
-{
+typedef struct PowerUp {
     Vetor2D posicao_pixels; /**< Posição em pixels do power-up na tela */
     TipoPowerUp tipo; /**< Efeito aplicado ao ser coletado */
     bool ativo; /**< Indica se o power-up ainda pode ser coletado */
@@ -122,8 +113,7 @@ typedef struct PowerUp
 /**
  * @brief Dados do layout da fase carregada do arquivo de mapa
  */
-typedef struct Mapa
-{
+typedef struct Mapa {
     char tiles[MAPA_LINHAS][MAPA_COLUNAS]; /**< Grade de tiles da fase */
     PosicaoMapa spawn_jogador; /**< Posição inicial do jogador na fase */
     PosicaoMapa porta_saida; /**< Posição da porta de saída da fase */
@@ -134,8 +124,7 @@ typedef struct Mapa
 /**
  * @brief Entrada individual do ranking persistido em disco
  */
-typedef struct TipoPlacar
-{
+typedef struct TipoPlacar {
     char nome[MAX_NOME_JOGADOR]; /**< Nome do jogador associado ao resultado */
     int time; /**< Tempo registrado para essa entrada do ranking */
 } TipoPlacar;
@@ -143,8 +132,7 @@ typedef struct TipoPlacar
 /**
  * @brief Controle de tempos das diferentes telas do jogo
  */
-typedef struct TemposTelas
-{
+typedef struct TemposTelas {
     float segundos_ate_jogar; /**< Tempo acumulado até o jogador começar */
     float segundos_ate_fim_partida; /**< Tempo acumulado até o fim da partida */
     float segundos_ate_pausar; /**< Momento em que o jogo foi pausado, usado para não contar o tempo parado */
@@ -153,8 +141,7 @@ typedef struct TemposTelas
 /**
  * @brief Estado principal da aplicação e da partida atual
  */
-typedef struct Jogo
-{
+typedef struct Jogo {
     TelaAtual tela_atual; /**< Tela atualmente exibida pela aplicação */
     bool deve_encerrar; /**< Sinaliza que o loop principal deve ser encerrado */
     bool ranking_atualizado; /**< Indica se o ranking já foi atualizado no fim da partida */
@@ -163,8 +150,8 @@ typedef struct Jogo
     int tempo_partida_segundos; /**< Tempo acumulado da partida em segundos */
     char nome_jogador[MAX_NOME_JOGADOR]; /**< Nome digitado para uso no ranking */
     Jogador jogador; /**< Estado atual do jogador */
-    Donkey donkey;/**<Estado atual do donkey */
-    Princesa princesa; /** <Estado atual da princesa */
+    Donkey donkey; /**< Estado atual do donkey */
+    Princesa princesa; /**< Estado atual da princesa */
     Inimigo inimigos[MAX_INIMIGOS]; /**< Vetor fixo com os inimigos ativos da fase */
     int quantidade_inimigos; /**< Quantidade válida de inimigos no vetor */
     Mapa mapa; /**< Dados da fase atualmente carregada */
@@ -191,5 +178,4 @@ typedef struct {
     Texture2D estrela;
     Texture2D coracao;
     Texture2D relogio;
-    
 } TexturasJogo;

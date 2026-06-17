@@ -2,12 +2,10 @@
 #include "raylib.h"
 #include "../core/models.h"
 
-
 /**
- * @brief Função responsável pelo looping da animação
- * @param[in] animacaoPersonagem recebe os dados necessários da animação (frame atual, velocidade, ultimo frame, etc..)
+ * @brief Faz o looping da animação entre first e last
+ * @param[in] animacaoPersonagem Dados da animação (frame atual, velocidade, último frame, etc.)
  */
-
 void atualiza_animacao(Animacao *animacaoPersonagem);
 
 /**
@@ -17,16 +15,16 @@ void atualiza_animacao(Animacao *animacaoPersonagem);
 void animacao_inicializar(Animacao *animacaoPersonagem);
 
 /**
- * @brief aplica a atualiza_animacao em varias entidades
- * @param[in] jogo 
+ * @brief Aplica atualiza_animacao em várias entidades do jogo
+ * @param[in] jogo Estado principal com as entidades
  */
-
- void atualiza_anim_entidades(Jogo* jogo);
+void atualiza_anim_entidades(Jogo* jogo);
 
 /**
- * @brief Função responsável por selecionar quais serão os frames do looping
- * @param[in] animacaoPersonagem Recebe os dados necessários da animação (frame atual, velocidade, ultimo frame, etc..)
- * @param[in] numero_frames_por_linha Informa para a função quantos frames a imagem possui no total
+ * @brief Seleciona o retângulo de corte do frame atual na imagem
+ * @param[in] animacaoPersonagem Dados da animação (frame atual, velocidade, último frame, etc.)
+ * @param[in] numero_frames_por_linha Quantidade de frames por linha na imagem
+ * @param[in] DirecaoHorizontal Direção para espelhar o frame
+ * @return Retângulo de corte no sprite sheet
  */
 Rectangle tamanho_frames(const Animacao *animacaoPersonagem, int numero_frames_por_linha, const DirecaoHorizontal DirecaoHorizontal);
-
