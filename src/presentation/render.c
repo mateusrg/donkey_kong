@@ -132,7 +132,7 @@ void desenha_elementos_HUD(Jogo *jogo)
 
         float tamanho_fonte_texto_tempo = TAMANHO_FONTE_TEMPO;
 
-        // Subtrai o bonus acumulado por power-ups; clamp em 0 para não exibir negativo
+        // Subtrai o bonus acumulado por power-ups; limita a 0 para não exibir negativo
         tempo_exibido = (int)GetTime() - (int)jogo->tempos_telas.segundos_ate_jogar - jogo->bonus_tempo_segundos;
         if (tempo_exibido < 0)
             tempo_exibido = 0;

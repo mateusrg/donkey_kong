@@ -18,7 +18,7 @@ bool tile_e_parede(char tile)
 }
 
 // Uma linha é de plataforma se tem pelo menos um Z.
-// Shaft de escada (H sozinho, sem Z na linha) retorna false.
+// Escada vertical (H sozinho, sem Z na linha) retorna false.
 bool linha_e_plataforma(const Mapa* mapa, int linha)
 {
     int c;
@@ -100,8 +100,8 @@ bool jogador_esta_sobre_plataforma(const Jogador* jogador, const Mapa* mapa)
     }
 
     // Z é sempre chão firme. H só conta se estiver numa linha de plataforma
-    // (linha com Z), ou seja, ZZZZHZZZZ. H de shaft (linha sem Z) não é chão.
-    // S e D nunca contam aqui — ficam uma linha acima do Z/H e causariam phantom.
+    // (linha com Z), ou seja, ZZZZHZZZZ. H de escada vertical (linha sem Z) não é chão.
+    // S e D nunca contam aqui — ficam uma linha acima do Z/H e causariam plataforma fantasma.
     tile = mapa->tiles[linha_base][col_centro];
     if (tile == TILE_CHAO)
     {
@@ -115,7 +115,7 @@ bool jogador_esta_sobre_plataforma(const Jogador* jogador, const Mapa* mapa)
 }
 
 // Entrada na escada: S+cima, D+baixo, ou H em qualquer direção vertical
-// (permite entrar na escada ao pular nela e aterrissar num tile H do shaft).
+// (permite entrar na escada ao pular nela e aterrissar num tile H da escada vertical).
 // Ao entrar, trava x, zera velocidade e limpa o estado de pulo.
 void jogador_usar_escada(Jogador* jogador, const Mapa* mapa, ComandosJogador comandos, float delta_tempo)
 {
@@ -212,7 +212,7 @@ void jogador_mover_horizontal(Jogador* jogador, const Mapa* mapa, ComandosJogado
 
     nova_x = jogador->posicao_pixels.x + (float)comandos.horizontal * VELOCIDADE_JOGADOR_PADRAO * delta_tempo;
 
-    // Clamp nos limites da tela antes de calcular col_borda.
+    // Limita o movimento aos limites da tela antes de calcular col_borda.
     // Sem isso, nova_x ligeiramente negativa dá col_borda = 0 (truncação C),
     // passando no check col_borda < 0 e deixando o sprite sair da tela.
     if (nova_x < 0.0f)
@@ -256,7 +256,7 @@ void jogador_mover_horizontal(Jogador* jogador, const Mapa* mapa, ComandosJogado
 
     if (bloqueado)
     {
-        // Snap na borda do tile bloqueante para não deixar gap nem overlap
+        // Encaixa o sprite na borda do tile bloqueante para não deixar espaço nem sobreposição
         if (comandos.horizontal == DIRECAO_DIREITA)
         {
             jogador->posicao_pixels.x = (float)(col_borda * TILE_SIZE) - (float)TILE_SIZE;
@@ -288,7 +288,7 @@ void jogador_mover_horizontal(Jogador* jogador, const Mapa* mapa, ComandosJogado
 }
 
 // Resolve colisão vertical por intervalo de pixels.
-// delta_tempo é limitado a 50ms internamente para evitar tunneling no primeiro
+// delta_tempo é limitado a 50ms internamente para evitar que o jogador atravesse tiles no primeiro
 // frame, quando GetFrameTime() pode retornar o tempo gasto na inicialização inteira.
 // Ao cair: varre apenas as linhas ABAIXO do corpo atual (não re-verifica tiles que
 // o sprite já ocupa). Só Z (TILE_CHAO) e H (TILE_ESCADA_PADRAO) bloqueiam a queda;
@@ -305,7 +305,7 @@ void jogador_mover_vertical(Jogador* jogador, const Mapa* mapa, float delta_temp
     bool bloqueado;
     int col;
 
-    // Clamp: previne tunneling quando delta_tempo é grande (lag spike, primeiro frame)
+    // Limita o delta: previne que o jogador atravesse tiles quando delta_tempo é grande (lag spike, primeiro frame)
     dt = delta_tempo;
     if (dt > 0.05f)
     {
@@ -326,7 +326,7 @@ void jogador_mover_vertical(Jogador* jogador, const Mapa* mapa, float delta_temp
     {
         // Caindo: varre da primeira linha ABAIXO do corpo atual até a nova linha base.
         // Iniciar depois do corpo atual evita bloquear em D/S que o sprite já ocupa,
-        // o que causaria o snap prematuro (flutuar um tile acima do destino correto).
+        // o que causaria o encaixe prematuro (flutuar um tile acima do destino correto).
         linha_base_atual = (int)((jogador->posicao_pixels.y + (float)TILE_SIZE - 1.0f) / TILE_SIZE);
         nova_linha_base  = (int)((nova_y               + (float)TILE_SIZE - 1.0f) / TILE_SIZE);
 
@@ -342,7 +342,7 @@ void jogador_mover_vertical(Jogador* jogador, const Mapa* mapa, float delta_temp
                 t = mapa->tiles[linha_verificar][col];
 
                 // Z bloqueia sempre. H bloqueia só se for linha de plataforma (tem Z).
-                // H de shaft e S/D não bloqueiam — evita phantom acima de escadas.
+                // H de escada vertical e S/D não bloqueiam — evita plataforma fantasma acima de escadas.
                 if (t == TILE_CHAO ||
                     (t == TILE_ESCADA_PADRAO && linha_e_plataforma(mapa, linha_verificar)))
                 {
@@ -391,7 +391,7 @@ void jogador_mover_vertical(Jogador* jogador, const Mapa* mapa, float delta_temp
 
             if (bloqueado)
             {
-                // Snap: topo do sprite encosta na base do tile bloqueante
+                // Encaixa o topo do sprite na base do tile bloqueante
                 nova_y = (float)((linha_verificar + 1) * TILE_SIZE);
                 jogador->velocidade.y = 0.0f;
             }
@@ -437,7 +437,7 @@ void jogador_atualizar(Jogador* jogador, const Mapa* mapa, ComandosJogador coman
 
     if (jogador->esta_no_chao && !jogador->esta_pulando)
     {
-        // No chão: snap preciso na superfície da plataforma e zera velocidade vertical.
+        // No chão: posiciona o sprite exatamente na superfície da plataforma e zera velocidade vertical.
         // Sem isso, gravidade acumula frame a frame e no primeiro frame (delta grande)
         // o jogador atravessaria a plataforma antes de ser corrigido.
         linha_plataforma = (int)((jogador->posicao_pixels.y + (float)TILE_SIZE) / TILE_SIZE);
@@ -450,7 +450,7 @@ void jogador_atualizar(Jogador* jogador, const Mapa* mapa, ComandosJogador coman
         jogador->esta_no_chao = jogador_esta_sobre_plataforma(jogador, mapa);
         // Só limpa esta_pulando ao pousar (velocidade >= 0 = caindo ou parado).
         // Sem esse check, D e H abaixo do corpo durante a subida zerariam esta_pulando
-        // prematuramente, fazendo o snap disparar no frame seguinte ("plataforma fantasma").
+        // prematuramente, fazendo o encaixe disparar no frame seguinte ("plataforma fantasma").
         if (jogador->esta_no_chao && jogador->velocidade.y >= 0.0f)
         {
             jogador->esta_pulando = false;

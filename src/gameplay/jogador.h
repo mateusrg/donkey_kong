@@ -60,7 +60,7 @@ bool tile_e_parede(char tile);
  * @param[in] mapa Mapa consultado
  * @param[in] linha Índice da linha a verificar
  * @return true se a linha contém ao menos um TILE_CHAO
- * @return false se a linha é shaft de escada ou vazia
+ * @return false se a linha é escada vertical ou vazia
  */
 bool linha_e_plataforma(const Mapa* mapa, int linha);
 

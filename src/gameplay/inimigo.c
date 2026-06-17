@@ -58,7 +58,7 @@ void inimigo_atualizar(Inimigo* inimigo, const Mapa* mapa, float delta_tempo)
     nova_x = inimigo->posicao_pixels.x + inimigo->velocidade.x * (float)inimigo->direcao_horizontal * delta_tempo;
 
     // Mesmo bug do jogador: (int)(-2.5f / 30.0f) = 0 em C, nunca dispara col_borda < 0.
-    // Clamp explícito antes de calcular col_borda evita que o inimigo saia da tela.
+    // Limita a posição explicitamente antes de calcular col_borda evita que o inimigo saia da tela.
     if (nova_x < 0.0f)
     {
         nova_x = 0.0f;
